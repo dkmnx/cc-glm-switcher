@@ -28,7 +28,19 @@ if ! command -v jq &> /dev/null; then
     exit 1
 fi
 
-cp "$ROOT_SCRIPT/configs/settings_$1.json" "$ROOT_CC/settings.json"
+# backup current settings.json
+timestamp=$(date +"%Y%m%d_%H%M%S")
+
+# check first if glm config exists
+check_glm_config=$(jq '(.env | has("ANTHROPIC_AUTH_TOKEN"))' "$ROOT_CC/settings.json")
+if [ "$check_glm_config" == "true" ]; then
+    # remove env section from settings.json
+    jq 'del(.env)' "$ROOT_CC/settings.json" > "$ROOT_SCRIPT/configs/settings_backup_$timestamp.json"
+else
+    cp "$ROOT_CC/settings.json" "$ROOT_SCRIPT/configs/settings_backup_$timestamp.json"
+fi
+
+cp "$ROOT_SCRIPT/configs/settings_backup_$timestamp.json" "$ROOT_CC/settings.json"
 
 if [ "$1" == "glm" ]; then
     # Extract ZAI_AUTH_TOKEN from .env file
@@ -43,13 +55,23 @@ if [ "$1" == "glm" ]; then
         exit 1
     fi
 
-    # Replace the token in settings.json using sed
-    if [ ! -f "$ROOT_CC/settings.json" ]; then
-        echo "Warning: $ROOT_CC/settings.json not found"
+    env_json='{
+        "ANTHROPIC_AUTH_TOKEN": "'"$auth_token"'",
+        "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",
+        "API_TIMEOUT_MS": "3000000",
+        "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-4.5-air",
+        "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-4.6",
+        "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-4.6",
+        "CLAUDE_MODEL_PROVIDER": "zhipu",
+        "GLM_MODEL_MAPPING": "haiku:glm-4.5-air,sonnet:glm-4.6,opus:glm-4.6"
+    }'
+
+    jq '. + {env: '"$env_json"'}' "$ROOT_CC/settings.json" > "$ROOT_CC/temp_settings.json" && mv "$ROOT_CC/temp_settings.json" "$ROOT_CC/settings.json"
+
+    if ! jq empty "$ROOT_CC/settings.json" >/dev/null 2>&1; then
+        echo "Error: Invalid JSON"
         exit 1
     fi
-
-    sed -i "s/\(\"ANTHROPIC_AUTH_TOKEN\": \"\)[^\"]*/\1$auth_token/" "$ROOT_CC/settings.json"
 
     echo "Switched to Z.AI GLM model"
 else
