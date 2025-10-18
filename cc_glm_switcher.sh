@@ -16,6 +16,12 @@ if [ "$1" != "cc" ] && [ "$1" != "glm" ]; then
     exit 1
 fi
 
+# check jq command exists
+if ! command -v jq &> /dev/null; then
+    echo "Error: jq command not found. Please install jq."
+    exit 1
+fi
+
 cp "$ROOT_SCRIPT/configs/settings_$1.json" "$ROOT_CC/settings.json"
 
 if [ "$1" == "glm" ]; then
