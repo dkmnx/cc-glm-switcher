@@ -1,2 +1,3 @@
 .env
 configs/settings_backup_*.json
+test_*.json
