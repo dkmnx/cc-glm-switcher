@@ -1,0 +1,23 @@
+{
+  "statusLine": {
+    "type": "command",
+    "command": "bash /home/osiris/.claude/statusline-command.sh"
+  },
+  "enabledPlugins": {
+    "arm-cortex-microcontrollers@claude-code-workflows": true,
+    "systems-programming@claude-code-workflows": true
+  },
+  "alwaysThinkingEnabled": true,
+  "env": {
+    "ANTHROPIC_AUTH_TOKEN": "test_glm_token_12345",
+    "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",
+    "API_TIMEOUT_MS": "3000000",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-4.5-air",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-4.6",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-4.6",
+    "CLAUDE_MODEL_PROVIDER": "zhipu",
+    "GLM_MODEL_MAPPING": "haiku:glm-4.5-air,sonnet:glm-4.6,opus:glm-4.6",
+    "CUSTOM_VAR": "preserve_this_value",
+    "ANOTHER_SETTING": "also_preserve"
+  }
+}

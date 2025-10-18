@@ -1,0 +1,11 @@
+{
+  "statusLine": {
+    "type": "command",
+    "command": "bash /home/osiris/.claude/statusline-command.sh"
+  },
+  "enabledPlugins": {
+    "arm-cortex-microcontrollers@claude-code-workflows": true,
+    "systems-programming@claude-code-workflows": true
+  },
+  "alwaysThinkingEnabled": true
+}
