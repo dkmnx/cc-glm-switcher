@@ -53,6 +53,9 @@ sudo dnf install jq
 4. **Create your `.env` file** with your Z.AI credentials:
    ```bash
    ZAI_AUTH_TOKEN=your_zai_api_token_here
+
+   # Optional: Configure backup retention (default: 5)
+   MAX_BACKUPS=5
    ```
 
 ## Usage
@@ -81,17 +84,63 @@ sudo dnf install jq
 
 # Show version information
 ./cc_glm_switcher.sh --version
+
+## Backup Management
+
+### List Backups
+```bash
+# List all available backup files
+./cc_glm_switcher.sh list
 ```
+
+### Restore From Backup
+```bash
+# Interactive restore (choose from menu)
+./cc_glm_switcher.sh restore
+
+# Restore from specific backup number
+./cc_glm_switcher.sh restore 2
+
+# Restore with dry run to preview
+./cc_glm_switcher.sh restore 1 --dry-run
+```
+
+### Backup Retention
+Configure backup retention in your `.env` file:
+```bash
+# Keep maximum 5 backup files (default)
+MAX_BACKUPS=5
+
+# Keep maximum 10 backup files
+MAX_BACKUPS=10
+
+# Keep maximum 3 backup files
+MAX_BACKUPS=3
+```
+
+The script automatically:
+- Creates timestamped backups before any changes
+- Removes oldest backups when limit is exceeded
+- Preserves the most recent backups
+- Creates backup of current settings before restore
 
 ## Features
 
 ### 🔒 Safety & Reliability
 - **Atomic operations**: Prevents configuration corruption
 - **Automatic backups**: Timestamped backups before any changes
+- **Backup retention**: Configurable number of backups to keep (default: 5)
 - **Lock mechanism**: Prevents concurrent script execution
 - **JSON validation**: Ensures configuration files remain valid
 - **Error handling**: Graceful failure with descriptive messages
 - **Intelligent environment preservation**: Safeguards your custom environment variables
+
+### 💾 Backup Management
+- **List backups**: View all available backup files with timestamps
+- **Interactive restore**: Choose from available backups via menu
+- **Direct restore**: Restore from specific backup number
+- **Pre-restore backup**: Automatically backs up current settings before restore
+- **Configurable retention**: Set `MAX_BACKUPS` in `.env` file (default: 5)
 
 ### 🔄 Model Configuration
 
