@@ -1,5 +1,7 @@
 # Claude Code ↔ Z.AI GLM Model Switcher
 
+**Current version:** 1.0.0
+
 A robust shell script utility that enables seamless switching between Claude Code and Z.AI GLM models by safely managing your Claude Code configuration.
 
 > **⚠️ Platform Compatibility**: This script has been tested and confirmed to work on Linux only. While it may work on other Unix-like systems (macOS, WSL), compatibility is not guaranteed.
@@ -76,6 +78,9 @@ sudo dnf install jq
 
 # Show help message
 ./cc_glm_switcher.sh -h
+
+# Show version information
+./cc_glm_switcher.sh --version
 ```
 
 ## Features
