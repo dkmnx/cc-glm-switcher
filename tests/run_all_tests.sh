@@ -6,8 +6,10 @@
 set -euo pipefail
 
 # Test directory configuration
-readonly TEST_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-readonly ROOT_DIR="$(dirname "$TEST_DIR")"
+TEST_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly TEST_DIR
+ROOT_DIR="$(dirname "$TEST_DIR")"
+readonly ROOT_DIR
 
 # Colors for output
 readonly RED='\033[0;31m'
@@ -104,7 +106,7 @@ run_test_suite() {
     
     # Extract test results from the output (strip ANSI codes first)
     local clean_output
-    clean_output=$(echo "$test_output" | sed 's/\x1b\[[0-9;]*m//g')
+    clean_output="${test_output//$(printf '\x1b')\[[0-9;]*m/}"
     
     local total_line
     local passed_line
@@ -119,9 +121,12 @@ run_test_suite() {
         local passed_match
         local failed_match
         
-        total_match=$(echo "$total_line" | sed 's/.*Total Assertions: *\([0-9]*\).*/\1/' || echo "")
-        passed_match=$(echo "$passed_line" | sed 's/.*Passed: *\([0-9]*\).*/\1/' || echo "")
-        failed_match=$(echo "$failed_line" | sed 's/.*Failed: *\([0-9]*\).*/\1/' || echo "")
+        total_match="${total_line##*Total Assertions: *}"
+        total_match="${total_match%%[^0-9]*}"
+        passed_match="${passed_line##*Passed: *}"
+        passed_match="${passed_match%%[^0-9]*}"
+        failed_match="${failed_line##*Failed: *}"
+        failed_match="${failed_match%%[^0-9]*}"
         
         # Validate that we got numeric values
         if [[ "$total_match" =~ ^[0-9]+$ ]] && [[ "$passed_match" =~ ^[0-9]+$ ]] && [[ "$failed_match" =~ ^[0-9]+$ ]]; then
@@ -225,7 +230,7 @@ run_all_tests() {
     if [ ${#failed_suites[@]} -gt 0 ]; then
         echo ""
         log_error "Failed test suites:"
-        for suite in "${failed_suits[@]}"; do
+        for suite in "${failed_suites[@]}"; do
             echo "  - $suite"
         done
         return 1

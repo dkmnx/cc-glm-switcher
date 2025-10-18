@@ -6,10 +6,13 @@
 set -euo pipefail
 
 # Test configuration
-readonly TEST_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-readonly ROOT_DIR="$(dirname "$TEST_DIR")"
+TEST_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly TEST_DIR
+ROOT_DIR="$(dirname "$TEST_DIR")"
+readonly ROOT_DIR
 readonly TEST_CONFIG_DIR="$TEST_DIR/test_configs"
 readonly TEST_CLAUDE_DIR="$TEST_DIR/test_claude"
+# shellcheck disable=SC2034  # Intentionally kept for potential future use
 readonly FIXTURES_DIR="$TEST_DIR/fixtures"
 
 # Colors for output

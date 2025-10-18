@@ -6,7 +6,7 @@
 set -euo pipefail
 
 # Import test helper functions
-# shellcheck source=tests/test_helper.sh
+# shellcheck disable=SC1091  # Source file not followed (normal for test helpers)
 source "$(dirname "${BASH_SOURCE[0]}")/test_helper.sh"
 
 # Test: Invalid JSON in settings.json
