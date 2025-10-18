@@ -97,6 +97,39 @@ validate_json() {
     return 0
 }
 
+# Check if current configuration is GLM mode
+is_glm_config() {
+    local file="$1"
+    local provider
+    local base_url
+
+    if [ ! -f "$file" ]; then
+        return 1
+    fi
+
+    # Check for GLM indicators in order of reliability
+    provider=$(jq -r '.env.CLAUDE_MODEL_PROVIDER // ""' "$file" 2>/dev/null)
+    if [ "$provider" == "zhipu" ]; then
+        log "GLM config detected: CLAUDE_MODEL_PROVIDER = zhipu"
+        return 0
+    fi
+
+    base_url=$(jq -r '.env.ANTHROPIC_BASE_URL // ""' "$file" 2>/dev/null)
+    if [[ "$base_url" == *"z.ai"* ]]; then
+        log "GLM config detected: ANTHROPIC_BASE_URL contains z.ai"
+        return 0
+    fi
+
+    # Check for GLM model mapping
+    if jq -e '.env.GLM_MODEL_MAPPING' "$file" >/dev/null 2>&1; then
+        log "GLM config detected: GLM_MODEL_MAPPING exists"
+        return 0
+    fi
+
+    log "No GLM configuration detected"
+    return 1
+}
+
 # Atomic file move function
 atomic_move() {
     local src="$1"
@@ -188,12 +221,10 @@ if ! validate_json "$ROOT_CC/settings.json"; then
 fi
 
 # backup current settings.json
-# check first if glm config exists
-check_glm_config=$(jq '(.env | has("ANTHROPIC_AUTH_TOKEN"))' "$ROOT_CC/settings.json")
-if [ "$check_glm_config" == "true" ]; then
-    log "Found GLM configuration, creating clean backup"
-    # remove env section from settings.json
-    if ! jq 'del(.env)' "$ROOT_CC/settings.json" > "$temp_backup"; then
+if is_glm_config "$ROOT_CC/settings.json"; then
+    log "Found GLM configuration, creating clean backup (removing only GLM variables)"
+    # Remove only GLM-specific environment variables, preserve others
+    if ! jq 'del(.env.ANTHROPIC_AUTH_TOKEN) | del(.env.ANTHROPIC_BASE_URL) | del(.env.API_TIMEOUT_MS) | del(.env.ANTHROPIC_DEFAULT_HAIKU_MODEL) | del(.env.ANTHROPIC_DEFAULT_SONNET_MODEL) | del(.env.ANTHROPIC_DEFAULT_OPUS_MODEL) | del(.env.CLAUDE_MODEL_PROVIDER) | del(.env.GLM_MODEL_MAPPING) | if .env == {} then del(.env) else . end' "$ROOT_CC/settings.json" > "$temp_backup"; then
         log_error "Failed to create clean backup"
         exit 1
     fi
@@ -215,11 +246,25 @@ fi
 atomic_move "$temp_backup" "$final_backup"
 log "Backup created: $final_backup"
 
-# Copy backup to current settings (for cc mode) or prepare for GLM mode
-if [ "$DRY_RUN" = false ]; then
-    cp "$final_backup" "$temp_settings"
+# Prepare settings based on model choice
+if [ "$MODEL" == "glm" ]; then
+    # For GLM mode, start with clean backup and add GLM variables
+    if [ "$DRY_RUN" = false ]; then
+        cp "$final_backup" "$temp_settings"
+    else
+        log "DRY RUN: Would copy backup to current settings"
+    fi
 else
-    log "DRY RUN: Would copy backup to current settings"
+    # For CC mode, merge current settings with backup, removing only GLM variables
+    if [ "$DRY_RUN" = false ]; then
+        log "Merging current settings with backup (removing only GLM variables)"
+        if ! jq 'del(.env.ANTHROPIC_AUTH_TOKEN) | del(.env.ANTHROPIC_BASE_URL) | del(.env.API_TIMEOUT_MS) | del(.env.ANTHROPIC_DEFAULT_HAIKU_MODEL) | del(.env.ANTHROPIC_DEFAULT_SONNET_MODEL) | del(.env.ANTHROPIC_DEFAULT_OPUS_MODEL) | del(.env.CLAUDE_MODEL_PROVIDER) | del(.env.GLM_MODEL_MAPPING) | if .env == {} then del(.env) else . end' "$ROOT_CC/settings.json" > "$temp_settings"; then
+            log_error "Failed to merge settings for CC mode"
+            exit 1
+        fi
+    else
+        log "DRY RUN: Would merge current settings removing only GLM variables"
+    fi
 fi
 
 if [ "$MODEL" == "glm" ]; then
@@ -258,7 +303,7 @@ if [ "$MODEL" == "glm" ]; then
 
     if [ "$DRY_RUN" = false ]; then
         log "Creating GLM configuration"
-        if ! jq '. + {env: '"$env_json"'}' "$temp_settings" > "$temp_settings.new"; then
+        if ! jq '.env += '"$env_json"' | if has("env") and .env == {} then del(.env) else . end' "$temp_settings" > "$temp_settings.new"; then
             log_error "Failed to create GLM configuration"
             exit 1
         fi
