@@ -28,9 +28,19 @@ if ! command -v jq &> /dev/null; then
     exit 1
 fi
 
-# backup current settings.json
+# check if configs backup directory exists, if not create it
+if [ ! -d "$ROOT_SCRIPT/configs" ]; then
+    mkdir -p "$ROOT_SCRIPT/configs"
+fi
+
 timestamp=$(date +"%Y%m%d_%H%M%S")
 
+# check if backup of settings_backup_*.json already exists, if yes remove it
+if ls "$ROOT_SCRIPT/configs/settings_backup_"*.json 1> /dev/null 2>&1; then
+    rm "$ROOT_SCRIPT/configs/settings_backup_"*.json
+fi
+
+# backup current settings.json
 # check first if glm config exists
 check_glm_config=$(jq '(.env | has("ANTHROPIC_AUTH_TOKEN"))' "$ROOT_CC/settings.json")
 if [ "$check_glm_config" == "true" ]; then
