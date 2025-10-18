@@ -16,7 +16,7 @@ if [ "$1" != "cc" ] && [ "$1" != "glm" ]; then
     exit 1
 fi
 
-cp configs/settings_"$1".json "$ROOT_CC"/settings.json
+cp "$ROOT_SCRIPT/configs/settings_$1.json" "$ROOT_CC/settings.json"
 
 if [ "$1" == "glm" ]; then
     # Extract ZAI_AUTH_TOKEN from .env file
