@@ -1,7 +1,14 @@
 #!/usr/bin/env bash
 
-# This script switches between Claude Code  and Z.AI GLM models
+# Claude Code ↔ Z.AI GLM Model Switcher
+# Author: dkmnx
+# Repository: https://github.com/dkmnx/cc-glm-switcher
+# Description: This script switches between Claude Code and Z.AI GLM models
 # Usage: ./cc_glm_switcher.sh [MODEL] [OPTIONS]
+
+# Version information
+readonly SCRIPT_VERSION="1.0.0"
+readonly SCRIPT_NAME="cc-glm-switcher"
 
 # Configuration variables
 ROOT_CC="$HOME/.claude"
@@ -27,12 +34,32 @@ while [[ $# -gt 0 ]]; do
             VERBOSE=true
             shift
             ;;
+        -V|--version)
+            echo "$SCRIPT_NAME v$SCRIPT_VERSION"
+            echo "Repository: https://github.com/dkmnx/cc-glm-switcher"
+            exit 0
+            ;;
         -h|--help)
+            echo "$SCRIPT_NAME v$SCRIPT_VERSION - Claude Code ↔ Z.AI GLM Model Switcher"
+            echo "Repository: https://github.com/dkmnx/cc-glm-switcher"
+            echo ""
             echo "Usage: $0 {cc|glm} [OPTIONS]"
+            echo ""
+            echo "Models:"
+            echo "  cc               Switch to Claude Code models"
+            echo "  glm              Switch to Z.AI GLM models"
+            echo ""
             echo "Options:"
             echo "  -v, --verbose    Enable verbose output"
             echo "  --dry-run        Show what would be done without making changes"
+            echo "  -V, --version    Show version information"
             echo "  -h, --help       Show this help message"
+            echo ""
+            echo "Examples:"
+            echo "  $0 glm           Switch to GLM models"
+            echo "  $0 cc            Switch to Claude Code models"
+            echo "  $0 glm -v        Switch with verbose output"
+            echo "  $0 cc --dry-run  Preview CC mode switch"
             exit 0
             ;;
         *)
@@ -189,8 +216,10 @@ show_current_config() {
 # Acquire lock before proceeding
 acquire_lock
 
-# Show current configuration if verbose
+# Show startup information if verbose
 if [ "$VERBOSE" = true ]; then
+    log "$SCRIPT_NAME v$SCRIPT_VERSION - Claude Code ↔ Z.AI GLM Model Switcher"
+    log "Repository: https://github.com/dkmnx/cc-glm-switcher"
     show_current_config
 fi
 
