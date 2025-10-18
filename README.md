@@ -200,65 +200,43 @@ When switching to GLM mode, the script adds these environment variables (preserv
 - ✅ **Preserved**: Any existing custom environment variables
 - ➕ **Added**: GLM-specific variables (overwrites if they exist)
 
-## Troubleshooting
-
-### Common Issues
-
-1. **"claude command not found"**
-   - Install Claude Code CLI: https://github.com/anthropics/claude-code
-
-2. **"jq command not found"**
-   - Install jq using your package manager (see Prerequisites)
-
-3. **"ZAI_AUTH_TOKEN not found"**
-   - Ensure `.env` file exists in the script directory
-   - Check that the token is correctly formatted
-
-4. **"Another instance is already running"**
-   - Check if another script instance is running
-   - Manually remove lock file: `rm ~/.claude/.switcher.lock`
-
-5. **"Invalid JSON" errors**
-   - Check your current `~/.claude/settings.json` for syntax errors
-   - Restore from a backup in the `configs/` directory
-
-6. **Lost custom environment variables**
-   - The script now preserves custom environment variables automatically
-   - Check verbose output (`-v`) to see what variables are being preserved
-   - If you lost custom variables before this fix, restore from an older backup
-
-### Debug Mode
-
-Use verbose output to troubleshoot issues:
-
-```bash
-./cc_glm_switcher.sh glm -v
-```
-
-### Recovery
-
-If something goes wrong, you can restore from a backup:
-
-```bash
-# List available backups
-ls -la configs/settings_backup_*.json
-
-# Restore a specific backup
-cp configs/settings_backup_YYYYMMDD_HHMMSS.json ~/.claude/settings.json
-```
-
 ## Security
 
 - **Token security**: Never commit your `.env` file to version control
 - **File permissions**: Script uses secure temporary file creation
 - **Input validation**: Tokens are validated for basic format requirements
 
+## Testing
+
+This project includes a comprehensive test suite with 136 assertions across 4 test suites covering all major functionality. For detailed testing information, including how to run tests, write new tests, and understand the test framework, see [TESTING.md](TESTING.md).
+
+### Quick Test Commands
+```bash
+# Run all tests
+./tests/run_all_tests.sh
+
+# Run with verbose output
+./tests/run_all_tests.sh --verbose
+
+# Check dependencies
+./tests/run_all_tests.sh --check-deps
+```
+
+## Troubleshooting
+
+For common issues, debugging steps, and recovery procedures, see [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
+
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Test thoroughly with both `--dry-run` and actual execution
-4. Submit a pull request
+We welcome contributions! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines on:
+
+- Development workflow and branch naming
+- Code quality standards and shellcheck requirements
+- Conventional commit message format
+- Testing requirements and best practices
+- Pull request guidelines and review process
+
+All contributions should follow our commit message standards and pass shellcheck validation.
 
 ## License
 
