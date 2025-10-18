@@ -16,6 +16,12 @@ if [ "$1" != "cc" ] && [ "$1" != "glm" ]; then
     exit 1
 fi
 
+# check if claude command exists
+if ! command -v claude &> /dev/null; then
+    echo "Error: claude command not found. See https://github.com/anthropics/claude-code for installation instructions."
+    exit 1
+fi
+
 # check jq command exists
 if ! command -v jq &> /dev/null; then
     echo "Error: jq command not found. Please install jq."
