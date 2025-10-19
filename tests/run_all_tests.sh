@@ -99,41 +99,31 @@ run_test_suite() {
     # Print the test output
     echo "$test_output"
 
-    # Extract test results from the test output (common for both success and failure)
+    # Extract test results from the test output using machine-readable summary
     local suite_passed=0
     local suite_total=0
     local suite_failed=0
-    
-    # Extract test results from the output (strip ANSI codes first)
-    local clean_output
-    clean_output="${test_output//$(printf '\x1b')\[[0-9;]*m/}"
-    
-    local total_line
-    local passed_line
-    local failed_line
-    
-    total_line=$(echo "$clean_output" | grep "Total Assertions:" | tail -1)
-    passed_line=$(echo "$clean_output" | grep "Passed:" | tail -1)
-    failed_line=$(echo "$clean_output" | grep "Failed:" | tail -1)
-    
-    if [[ -n "$total_line" ]] && [[ -n "$passed_line" ]] && [[ -n "$failed_line" ]]; then
-        local total_match
-        local passed_match
-        local failed_match
-        
-        total_match="${total_line##*Total Assertions: *}"
-        total_match="${total_match%%[^0-9]*}"
-        passed_match="${passed_line##*Passed: *}"
-        passed_match="${passed_match%%[^0-9]*}"
-        failed_match="${failed_line##*Failed: *}"
-        failed_match="${failed_match%%[^0-9]*}"
-        
-        # Validate that we got numeric values
-        if [[ "$total_match" =~ ^[0-9]+$ ]] && [[ "$passed_match" =~ ^[0-9]+$ ]] && [[ "$failed_match" =~ ^[0-9]+$ ]]; then
-            suite_total=$total_match
-            suite_passed=$passed_match
-            suite_failed=$failed_match
-        fi
+
+    # Look for the machine-readable summary line
+    local summary_line
+    summary_line=$(echo "$test_output" | grep "AUTOMATED_SUMMARY:" | tail -1)
+
+    if [[ -n "$summary_line" ]]; then
+        # Parse AUTOMATED_SUMMARY:TOTAL:PASSED:FAILED
+        suite_total=$(echo "$summary_line" | cut -d: -f2)
+        suite_passed=$(echo "$summary_line" | cut -d: -f3)
+        suite_failed=$(echo "$summary_line" | cut -d: -f4)
+    fi
+
+    # Ensure we have numeric values, fallback to 0
+    suite_total=${suite_total:-0}
+    suite_passed=${suite_passed:-0}
+    suite_failed=${suite_failed:-0}
+
+    # Debug logging (can be enabled by setting TEST_DEBUG=1)
+    if [[ "${TEST_DEBUG:-0}" == "1" ]]; then
+        echo "DEBUG: Summary line: '$summary_line'" >&2
+        echo "DEBUG: Extracted - Total: '$suite_total', Passed: '$suite_passed', Failed: '$suite_failed'" >&2
     fi
 
     if [ $test_exit_code -eq 0 ]; then

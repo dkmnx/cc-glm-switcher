@@ -171,6 +171,14 @@ assert_directory_exists() {
 setup_test_environment() {
     log_info "Setting up test environment..."
 
+    # Clean up any existing test environment first
+    cleanup_test_environment
+
+    # Create test directories with unique names to avoid conflicts
+    local timestamp
+    timestamp=$(date +"%Y%m%d_%H%M%S_%N")
+    export TEST_RUN_ID="test_${timestamp}_$$"
+
     # Create test directories
     mkdir -p "$TEST_CONFIG_DIR"
     mkdir -p "$TEST_CLAUDE_DIR"
@@ -199,9 +207,17 @@ EOF
     export ROOT_CC="$TEST_CLAUDE_DIR"
     export ROOT_SCRIPT="$ROOT_DIR"
     export CONFIG_DIR="$TEST_CONFIG_DIR"
-    
+
     # Also export for subshells
     export TEST_DIR TEST_CONFIG_DIR TEST_CLAUDE_DIR ROOT_DIR
+
+    # Clean up any leftover lock files from previous test runs
+    local lock_file
+    lock_file="${ROOT_SCRIPT}/.switcher.lock"
+    if [[ -f "$lock_file" ]] && kill -0 "$(cat "$lock_file" 2>/dev/null)" 2>/dev/null; then
+        log_warning "Lock file exists from previous run, attempting cleanup..."
+        rm -f "$lock_file"
+    fi
 
     log_info "Test environment setup complete"
 }
@@ -209,13 +225,42 @@ EOF
 cleanup_test_environment() {
     log_info "Cleaning up test environment..."
 
-    # Remove test directories
-    rm -rf "$TEST_CONFIG_DIR"
-    rm -rf "$TEST_CLAUDE_DIR"
-    rm -f "$TEST_DIR/.env"
+    # Remove test directories (be more thorough)
+    if [[ -d "$TEST_CONFIG_DIR" ]]; then
+        rm -rf "$TEST_CONFIG_DIR"
+    fi
+
+    if [[ -d "$TEST_CLAUDE_DIR" ]]; then
+        rm -rf "$TEST_CLAUDE_DIR"
+    fi
+
+    # Remove test .env file
+    if [[ -f "$TEST_DIR/.env" ]]; then
+        rm -f "$TEST_DIR/.env"
+    fi
+
+    # Clean up any test-specific temporary files
+    find "$TEST_DIR" -name "*.tmp" -type f -delete 2>/dev/null || true
+
+    # Clean up lock files
+    local lock_file
+    # Use ROOT_SCRIPT if available, otherwise default to current script directory
+    if [[ -n "${ROOT_SCRIPT:-}" ]]; then
+        lock_file="${ROOT_SCRIPT}/.switcher.lock"
+    else
+        lock_file="${ROOT_DIR}/.switcher.lock"
+    fi
+    if [[ -f "$lock_file" ]]; then
+        # Only remove lock file if it belongs to this test run or is stale
+        local lock_pid
+        lock_pid=$(cat "$lock_file" 2>/dev/null || echo "")
+        if [[ -z "$lock_pid" ]] || ! kill -0 "$lock_pid" 2>/dev/null || [[ "$lock_pid" == "$$" ]]; then
+            rm -f "$lock_file"
+        fi
+    fi
 
     # Unset environment variables
-    unset ROOT_CC ROOT_SCRIPT CONFIG_DIR
+    unset ROOT_CC ROOT_SCRIPT CONFIG_DIR TEST_RUN_ID
 
     log_info "Test environment cleanup complete"
 }
@@ -279,6 +324,9 @@ print_test_results() {
     echo -e "Total Assertions: ${BLUE}$TESTS_TOTAL${NC}"
     echo -e "Passed:           ${GREEN}$TESTS_PASSED${NC}"
     echo -e "Failed:           ${RED}$TESTS_FAILED${NC}"
+
+    # Machine-readable summary for the test runner
+    echo "AUTOMATED_SUMMARY:$TESTS_TOTAL:$TESTS_PASSED:$TESTS_FAILED"
 
     if [ $TESTS_FAILED -eq 0 ]; then
         echo -e "${GREEN}✓ All assertions passed!${NC}"

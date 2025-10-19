@@ -27,7 +27,7 @@ test_backup_creation() {
     backup_count=$(count_backup_files)
 
     assert_equals "$((initial_backups + 1))" "$backup_count" "Backup should be created"
-    
+
     local latest_backup
     latest_backup=$(get_latest_backup)
     assert_file_exists "$latest_backup" "Backup file should exist"
@@ -103,12 +103,12 @@ test_interactive_restore() {
     create_test_backup "20250101_130000"
 
     # Create a different settings state
-    cat > "$TEST_CLAUDE_DIR/settings.json" << EOF
+    cat > "$TEST_CLAUDE_DIR/settings.json" << EOFS
 {
   "statusLine": {"type": "command"},
   "modified": "this_should_be_restored"
 }
-EOF
+EOFS
 
     # Test interactive restore (we'll use a simulated input for testing)
     # Note: In real interactive mode, this would wait for user input
@@ -153,12 +153,12 @@ test_pre_restore_backup() {
     create_test_backup "pre_restore_test"
 
     # Modify current settings
-    cat > "$TEST_CLAUDE_DIR/settings.json" << EOF
+    cat > "$TEST_CLAUDE_DIR/settings.json" << EOFS
 {
   "statusLine": {"type": "command"},
   "modified": "current_settings_before_restore"
 }
-EOF
+EOFS
 
     # Perform restore (this should create a pre-restore backup)
     cd "$ROOT_DIR" || exit 1
@@ -186,7 +186,7 @@ test_backup_with_custom_env() {
     log_info "Testing backup creation with custom environment variables..."
 
     # Create settings with custom environment variables
-    cat > "$TEST_CLAUDE_DIR/settings.json" << EOF
+    cat > "$TEST_CLAUDE_DIR/settings.json" << EOFS
 {
   "statusLine": {"type": "command"},
   "env": {
@@ -195,7 +195,7 @@ test_backup_with_custom_env() {
     "OTHER_SETTING": "preserve_me"
   }
 }
-EOF
+EOFS
 
     # Create backup
     cd "$ROOT_DIR" || exit 1
