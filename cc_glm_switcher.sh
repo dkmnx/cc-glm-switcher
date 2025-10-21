@@ -268,6 +268,88 @@ restore_backup() {
     fi
 }
 
+# Check if current configuration is GLM mode
+is_glm_config() {
+    local file="$1"
+    local provider
+    local base_url
+
+    if [ ! -f "$file" ]; then
+        return 1
+    fi
+
+    # Check if file is empty
+    if [ ! -s "$file" ]; then
+        return 1
+    fi
+
+    # Check for GLM indicators in order of reliability
+    provider=$(jq -r '.env.CLAUDE_MODEL_PROVIDER // ""' "$file" 2>/dev/null)
+    if [ "$provider" == "zhipu" ]; then
+        log "GLM config detected: CLAUDE_MODEL_PROVIDER = zhipu"
+        return 0
+    fi
+
+    base_url=$(jq -r '.env.ANTHROPIC_BASE_URL // ""' "$file" 2>/dev/null)
+    if [[ "$base_url" == *"z.ai"* ]]; then
+        log "GLM config detected: ANTHROPIC_BASE_URL contains z.ai"
+        return 0
+    fi
+
+    # Check for GLM model mapping
+    if jq -e '.env.GLM_MODEL_MAPPING' "$file" >/dev/null 2>&1; then
+        log "GLM config detected: GLM_MODEL_MAPPING exists"
+        return 0
+    fi
+
+    log "No GLM configuration detected"
+    return 1
+}
+
+# Show current settings.json file
+show_settings() {
+    if [ ! -f "$ROOT_CC/settings.json" ]; then
+        log_error "Settings file not found at $ROOT_CC/settings.json"
+        return 1
+    fi
+
+    echo "Current settings.json ($ROOT_CC/settings.json):"
+    echo "================================================"
+
+    if command -v bat &> /dev/null; then
+        # Use bat for syntax highlighting if available
+        bat --style=plain --language=json "$ROOT_CC/settings.json"
+    elif command -v jq &> /dev/null; then
+        # Use jq for pretty printing if available
+        jq '.' "$ROOT_CC/settings.json"
+    else
+        # Fallback to cat
+        cat "$ROOT_CC/settings.json"
+    fi
+
+    echo "================================================"
+
+    # Show configuration summary
+    if [ -s "$ROOT_CC/settings.json" ] && jq empty "$ROOT_CC/settings.json" 2>/dev/null; then
+        local provider
+        provider=$(jq -r '.env.CLAUDE_MODEL_PROVIDER // "claude (default)"' "$ROOT_CC/settings.json" 2>/dev/null)
+        local base_url
+        base_url=$(jq -r '.env.ANTHROPIC_BASE_URL // "default"' "$ROOT_CC/settings.json" 2>/dev/null)
+
+        echo "Configuration Summary:"
+        echo "  Provider: $provider"
+        echo "  Base URL: $base_url"
+
+        if is_glm_config "$ROOT_CC/settings.json"; then
+            echo "  Mode: Z.AI GLM"
+        else
+            echo "  Mode: Claude Code"
+        fi
+    fi
+
+    echo "================================================"
+}
+
 # Parse command line arguments
 MODEL=""
 RESTORE_ARG=""
@@ -295,6 +377,10 @@ while [[ $# -gt 0 ]]; do
             list_backups
             exit 0
             ;;
+        show)
+            show_settings
+            exit 0
+            ;;
         restore)
             shift
             RESTORE_ARG=$(trim_whitespace "$1")
@@ -309,13 +395,14 @@ while [[ $# -gt 0 ]]; do
             echo "$SCRIPT_NAME v$SCRIPT_VERSION - Claude Code ↔ Z.AI GLM Model Switcher"
             echo "Repository: https://github.com/dkmnx/cc-glm-switcher"
             echo ""
-            echo "Usage: $0 {cc|glm|list|restore} [OPTIONS]"
+            echo "Usage: $0 {cc|glm|list|restore|show} [OPTIONS]"
             echo ""
             echo "Commands:"
             echo "  cc               Switch to Claude Code models"
             echo "  glm              Switch to Z.AI GLM models"
             echo "  list             List available backup files"
             echo "  restore [N]      Restore from backup (interactive or specify number)"
+            echo "  show             Display current settings.json file"
             echo ""
             echo "Options:"
             echo "  -v, --verbose    Enable verbose output"
@@ -327,6 +414,7 @@ while [[ $# -gt 0 ]]; do
             echo "  $0 glm           Switch to GLM models"
             echo "  $0 cc            Switch to Claude Code models"
             echo "  $0 list          List available backups"
+            echo "  $0 show          Display current settings.json"
             echo "  $0 restore       Interactive restore menu"
             echo "  $0 restore 3     Restore from backup #3"
             echo "  $0 glm -v        Switch with verbose output"
@@ -403,50 +491,6 @@ cleanup() {
 
 # Set up trap for cleanup
 trap cleanup EXIT INT TERM
-
-# Check if current configuration is GLM mode
-is_glm_config() {
-    local file="$1"
-    local provider
-    local base_url
-
-    if [ ! -f "$file" ]; then
-        return 1
-    fi
-
-    # Check if file is empty
-    if [ ! -s "$file" ]; then
-        return 1
-    fi
-
-    # Check for GLM indicators in order of reliability
-    provider=$(jq -r '.env.CLAUDE_MODEL_PROVIDER // ""' "$file" 2>/dev/null)
-    if [ "$provider" == "zhipu" ]; then
-        log "GLM config detected: CLAUDE_MODEL_PROVIDER = zhipu"
-        return 0
-    fi
-
-    base_url=$(jq -r '.env.ANTHROPIC_BASE_URL // ""' "$file" 2>/dev/null)
-    if [[ "$base_url" == *"z.ai"* ]]; then
-        log "GLM config detected: ANTHROPIC_BASE_URL contains z.ai"
-        return 0
-    fi
-
-    # Check for GLM model mapping
-    if jq -e '.env.GLM_MODEL_MAPPING' "$file" >/dev/null 2>&1; then
-        log "GLM config detected: GLM_MODEL_MAPPING exists"
-        return 0
-    fi
-
-    log "No GLM configuration detected"
-    return 1
-}
-
-
-
-
-
-
 
 # check if claude command exists
 if ! command -v claude &> /dev/null; then
