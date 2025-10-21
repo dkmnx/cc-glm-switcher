@@ -53,7 +53,7 @@ load_config() {
     elif [ -n "$TEST_DIR" ] && [ -f "$TEST_DIR/.env" ]; then
         env_file="$TEST_DIR/.env"
     fi
-    
+
     if [ -n "$env_file" ]; then
         set -a
         # shellcheck disable=SC1090
@@ -276,7 +276,7 @@ RESTORE_ARG=""
 while [[ $# -gt 0 ]]; do
     # Trim whitespace from current argument
     arg=$(trim_whitespace "$1")
-    
+
     case $arg in
         cc|glm)
             MODEL="$arg"
@@ -364,8 +364,25 @@ fi
 # Lock file mechanism
 acquire_lock() {
     log "Attempting to acquire lock..."
+
+    # Ensure the directory for the lock file exists
+    local lock_dir
+    lock_dir=$(dirname "$LOCK_FILE")
+    if [ ! -d "$lock_dir" ]; then
+        mkdir -p "$lock_dir" || {
+            log_error "Failed to create lock directory: $lock_dir"
+            exit 1
+        }
+    fi
+
     if ! (set -C; echo $$ > "$LOCK_FILE") 2>/dev/null; then
-        log_error "Another instance is already running. PID: $(cat "$LOCK_FILE")"
+        if [ -f "$LOCK_FILE" ]; then
+            local pid
+            pid=$(cat "$LOCK_FILE" 2>/dev/null)
+            log_error "Another instance is already running. PID: $pid"
+        else
+            log_error "Failed to acquire lock (unable to create lock file)"
+        fi
         exit 1
     fi
     log "Lock acquired successfully"
