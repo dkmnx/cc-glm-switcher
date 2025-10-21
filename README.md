@@ -9,6 +9,7 @@ A robust shell script utility that enables seamless switching between Claude Cod
 ## Overview
 
 This script allows you to easily toggle between:
+
 - **Claude Code models** (default Anthropic models)
 - **Z.AI GLM models** (GLM-4.5-air, GLM-4.6) via Z.AI's API
 
@@ -40,17 +41,20 @@ sudo dnf install jq
 
 1. **Clone or download this repository**
 2. **Create the environment file**:
+
    ```bash
    cp .env.example .env
    # Edit .env with your Z.AI API token
    ```
 
 3. **Make the script executable**:
+
    ```bash
    chmod +x cc_glm_switcher.sh
    ```
 
 4. **Create your `.env` file** with your Z.AI credentials:
+
    ```bash
    ZAI_AUTH_TOKEN=your_zai_api_token_here
 
@@ -70,6 +74,21 @@ sudo dnf install jq
 ./cc_glm_switcher.sh glm
 ```
 
+### View Current Configuration
+
+```bash
+# Display current settings.json with configuration summary
+./cc_glm_switcher.sh show
+```
+
+This will display:
+
+- The complete `settings.json` file content (with syntax highlighting if `bat` or `jq` is available)
+- Configuration summary showing:
+  - Current provider (Claude or zhipu)
+  - Base URL
+  - Current mode (Claude Code or Z.AI GLM)
+
 ### Advanced Options
 
 ```bash
@@ -84,16 +103,19 @@ sudo dnf install jq
 
 # Show version information
 ./cc_glm_switcher.sh --version
+```
 
 ## Backup Management
 
 ### List Backups
+
 ```bash
 # List all available backup files
 ./cc_glm_switcher.sh list
 ```
 
 ### Restore From Backup
+
 ```bash
 # Interactive restore (choose from menu)
 ./cc_glm_switcher.sh restore
@@ -106,7 +128,9 @@ sudo dnf install jq
 ```
 
 ### Backup Retention
+
 Configure backup retention in your `.env` file:
+
 ```bash
 # Keep maximum 5 backup files (default)
 MAX_BACKUPS=5
@@ -119,14 +143,35 @@ MAX_BACKUPS=3
 ```
 
 The script automatically:
+
 - Creates timestamped backups before any changes
 - Removes oldest backups when limit is exceeded
 - Preserves the most recent backups
 - Creates backup of current settings before restore
 
+### Complete Command Reference
+
+Run `./cc_glm_switcher.sh --help` to see all available commands:
+
+```text
+Commands:
+  cc               Switch to Claude Code models
+  glm              Switch to Z.AI GLM models
+  list             List available backup files
+  restore [N]      Restore from backup (interactive or specify number)
+  show             Display current settings.json file
+
+Options:
+  -v, --verbose    Enable verbose output
+  --dry-run        Show what would be done without making changes
+  -V, --version    Show version information
+  -h, --help       Show this help message
+```
+
 ## Features
 
 ### 🔒 Safety & Reliability
+
 - **Atomic operations**: Prevents configuration corruption
 - **Automatic backups**: Timestamped backups before any changes
 - **Backup retention**: Configurable number of backups to keep (default: 5)
@@ -136,6 +181,7 @@ The script automatically:
 - **Intelligent environment preservation**: Safeguards your custom environment variables
 
 ### 💾 Backup Management
+
 - **List backups**: View all available backup files with timestamps
 - **Interactive restore**: Choose from available backups via menu
 - **Direct restore**: Restore from specific backup number
@@ -145,10 +191,12 @@ The script automatically:
 ### 🔄 Model Configuration
 
 #### Claude Code Mode
+
 - Removes custom environment variables
 - Restores default Anthropic model configuration
 
 #### GLM Mode
+
 - Configures Z.AI API endpoint
 - Maps Claude model names to GLM equivalents:
   - `haiku` → `glm-4.5-air`
@@ -156,6 +204,7 @@ The script automatically:
   - `opus` → `glm-4.6`
 
 ### 📁 File Management
+
 - **Backups**: Stored in `configs/settings_backup_YYYYMMDD_HHMMSS.json`
 - **Lock file**: `$HOME/.claude/.switcher.lock`
 - **Temp files**: Securely created and cleaned up automatically
@@ -192,11 +241,13 @@ When switching to GLM mode, the script adds these environment variables (preserv
 
 ### 🔄 What Gets Backed Up
 
-#### From GLM Mode → Claude Code Mode:
+#### From GLM Mode → Claude Code Mode
+
 - ✅ **Preserved**: All your custom environment variables (`CUSTOM_API_KEY`, `PERSONAL_CONFIG`, etc.)
 - ❌ **Removed**: Only GLM-specific variables listed above
 
-#### From Claude Code Mode → GLM Mode:
+#### From Claude Code Mode → GLM Mode
+
 - ✅ **Preserved**: Any existing custom environment variables
 - ➕ **Added**: GLM-specific variables (overwrites if they exist)
 
@@ -211,6 +262,7 @@ When switching to GLM mode, the script adds these environment variables (preserv
 This project includes a comprehensive test suite with 136 assertions across 4 test suites covering all major functionality. For detailed testing information, including how to run tests, write new tests, and understand the test framework, see [TESTING.md](TESTING.md).
 
 ### Quick Test Commands
+
 ```bash
 # Run all tests
 ./tests/run_all_tests.sh
@@ -247,6 +299,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ## Support
 
 For issues related to:
+
 - **Script functionality**: Create an issue in this repository
 - **Claude Code**: Visit the [Claude Code documentation](https://docs.claude.com)
 - **Z.AI API**: Contact Z.AI support
