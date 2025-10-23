@@ -564,6 +564,24 @@ final_backup="$CONFIG_DIR/settings_backup_$timestamp.json"
 
 log "Created temporary files: $temp_settings, $temp_backup"
 
+# Check if settings.json exists, create minimal valid file if not
+if [ ! -f "$ROOT_CC/settings.json" ]; then
+    log "Settings file not found at $ROOT_CC/settings.json"
+    log "Creating minimal valid settings.json"
+
+    # Ensure the directory exists
+    if [ ! -d "$ROOT_CC" ]; then
+        mkdir -p "$ROOT_CC" || {
+            log_error "Failed to create directory: $ROOT_CC"
+            exit 1
+        }
+    fi
+
+    # Create minimal valid JSON
+    echo '{}' > "$ROOT_CC/settings.json"
+    log "Created new settings.json with empty configuration"
+fi
+
 # Validate current settings.json before proceeding
 if ! validate_json "$ROOT_CC/settings.json"; then
     log_error "Current settings.json is invalid. Cannot proceed."
