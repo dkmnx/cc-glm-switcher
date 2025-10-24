@@ -1,6 +1,8 @@
 # Claude Code ↔ Z.AI GLM Model Switcher
 
-[![Tests](https://github.com/dkmnx/cc-glm-switcher/actions/workflows/tests.yml/badge.svg)](https://github.com/dkmnx/cc-glm-switcher/actions/workflows/tests.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Shell Script](https://img.shields.io/badge/Shell_Script-%23121011.svg?logo=gnu-bash&logoColor=white)](https://www.gnu.org/software/bash/)
+[![ci](https://github.com/dkmnx/cc-glm-switcher/actions/workflows/tests.yml/badge.svg)](https://github.com/dkmnx/cc-glm-switcher/actions/workflows/ci.yml)
 
 **Current version:** 1.0.0
 
