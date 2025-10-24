@@ -1,5 +1,7 @@
 # Claude Code ↔ Z.AI GLM Model Switcher
 
+[![Tests](https://github.com/dkmnx/cc-glm-switcher/actions/workflows/tests.yml/badge.svg)](https://github.com/dkmnx/cc-glm-switcher/actions/workflows/tests.yml)
+
 **Current version:** 1.0.0
 
 A robust shell script utility that enables seamless switching between Claude Code and Z.AI GLM models by safely managing your Claude Code configuration.
@@ -259,7 +261,7 @@ When switching to GLM mode, the script adds these environment variables (preserv
 
 ## Testing
 
-This project includes a comprehensive test suite with 136 assertions across 4 test suites covering all major functionality. For detailed testing information, including how to run tests, write new tests, and understand the test framework, see [TESTING.md](TESTING.md).
+This project includes a comprehensive automated test suite with 37 targeted checks across three scripts plus a master runner. For detailed testing information, including how to write additional cases and understand the test framework, see [TESTING.md](TESTING.md).
 
 ### Quick Test Commands
 
@@ -272,7 +274,31 @@ This project includes a comprehensive test suite with 136 assertions across 4 te
 
 # Check dependencies
 ./tests/run_all_tests.sh --check-deps
+
+# Mirror the GitHub Actions job locally (requires sudo for apt-get)
+./tests/run_all_tests.sh --check-deps && ./tests/run_all_tests.sh
 ```
+
+### Continuous Integration
+
+GitHub Actions automatically runs the test suite on every push to `main` and on all pull requests. The workflow installs `jq`, `shellcheck`, and `bat`, verifies their availability, and then executes the full suite (`./tests/run_all_tests.sh`). Check the latest status via the **Tests** badge above or by visiting the [Actions dashboard](https://github.com/dkmnx/cc-glm-switcher/actions/workflows/tests.yml).
+
+#### Reproducing the CI job locally
+
+- **Using `act`** (recommended):
+  ```bash
+  act push --job test
+  ```
+  `act` will run the workflow in a container that matches GitHub’s `ubuntu-latest` runner.
+
+- **Manual dry run** without extra tooling:
+  ```bash
+  sudo apt-get update
+  sudo apt-get install -y jq shellcheck bat
+  ./tests/run_all_tests.sh --check-deps
+  ./tests/run_all_tests.sh
+  ```
+  Running the commands inside an Ubuntu container (`docker run -it --rm ubuntu:22.04 bash`) gives you a clean environment similar to CI.
 
 ## Troubleshooting
 
@@ -302,4 +328,4 @@ For issues related to:
 
 - **Script functionality**: Create an issue in this repository
 - **Claude Code**: Visit the [Claude Code documentation](https://docs.claude.com)
-- **Z.AI API**: Contact Z.AI support
+- **Z.AI API**: Contact [Z.AI support](https://z.ai/contact)
