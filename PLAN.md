@@ -7,10 +7,10 @@ A minimized, essential test suite with **3 phases** covering critical functional
 | Phase | Status | Tests | Description |
 |-------|--------|-------|-------------|
 | **Phase 1** | ✅ **COMPLETED** | Infrastructure | Test framework, helpers, fixtures, docs |
-| **Phase 2** | ⏳ Pending | ~20 tests | Core switching, backups, JSON validation |
+| **Phase 2** | ✅ **COMPLETED** | 20 tests | Core switching, backups, JSON validation |
 | **Phase 3** | ⏳ Pending | ~18 tests | Error handling, CLI options, master runner |
 
-**Current Status:** Phase 1 complete with bonus cleanup features. Ready for Phase 2.
+**Current Status:** Phase 2 test suite landed (core switching + backups). Phase 3 next.
 
 ---
 
@@ -40,7 +40,7 @@ A minimized, essential test suite with **3 phases** covering critical functional
    - Cleanup functionality guide ✅
    - Quick reference with cleanup commands table ✅
 
-4. **`tests/demo_cleanup.sh`** ✅ - Cleanup demonstration script
+4. **(Removed)** `tests/demo_cleanup.sh` - Initial cleanup demo script (no longer needed)
 
 ### Phase 1 Testing:
 ```bash
@@ -48,7 +48,7 @@ A minimized, essential test suite with **3 phases** covering critical functional
 source tests/test_helper.sh && setup_test_env && teardown_test_env
 
 # Run cleanup demo
-./tests/demo_cleanup.sh
+*(Removed in Phase 2 cleanup)*
 ```
 
 **Status:** ✅ All tests passed - Ready for Phase 2
@@ -56,7 +56,7 @@ source tests/test_helper.sh && setup_test_env && teardown_test_env
 **Completion Date:** October 24, 2025
 
 **Phase 1 Statistics:**
-- Files created: 6 (test_helper.sh, 3 fixtures, README.md, demo_cleanup.sh)
+- Files created: 6 (test_helper.sh, 3 fixtures, README.md, demo script; demo later removed)
 - Functions implemented: 14 (4 assertions + 2 env setup + 3 cleanup + 2 tracking + 3 helpers)
 - Bonus features: Automatic cleanup with trap handlers
 - Documentation: Comprehensive README with examples and quick reference
@@ -67,7 +67,7 @@ source tests/test_helper.sh && setup_test_env && teardown_test_env
 **Goal:** Test essential model switching and backup operations
 
 ### Test Suite:
-**`tests/test_core.sh`** - ~20 tests
+**`tests/test_core.sh`** ✅ - 20 tests
 
 **Model Switching** (10 tests):
 - Switch to GLM: adds all required env vars
@@ -99,7 +99,11 @@ source tests/test_helper.sh && setup_test_env && teardown_test_env
 ```bash
 ./tests/test_core.sh
 ```
-**Expected:** ~20 tests pass
+**Result:** 20 tests passing locally (2025-10-24)
+
+**Notes:**
+- Cleanup demo script removed to keep only runnable test assets.
+- ShellCheck verified: `shellcheck cc_glm_switcher.sh tests/*.sh`
 
 ---
 

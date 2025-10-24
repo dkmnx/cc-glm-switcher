@@ -132,7 +132,8 @@ cleanup_all() {
     fi
 
     # Clean up any orphaned test directories
-    local orphaned=$(find /tmp -maxdepth 1 -type d -name "cc_glm_test_*" 2>/dev/null)
+    local orphaned
+    orphaned=$(find /tmp -maxdepth 1 -type d -name "cc_glm_test_*" 2>/dev/null)
     if [[ -n "$orphaned" ]]; then
         while IFS= read -r dir; do
             rm -rf "$dir" 2>/dev/null
