@@ -10,7 +10,7 @@ A minimized, essential test suite with **3 phases** covering critical functional
 | **Phase 2** | ✅ **COMPLETED** | 20 tests | Core switching, backups, JSON validation |
 | **Phase 3** | ✅ **COMPLETED** | 17 tests + runner | Error handling, CLI options, master runner |
 
-**Current Status:** All three phases implemented. Full suite and runner are green locally.
+**Current Status:** All three phases implemented. Full suite, runner, and CI workflow are green.
 
 ---
 
@@ -143,17 +143,18 @@ source tests/test_helper.sh && setup_test_env && teardown_test_env
 
 **`tests/run_all_tests.sh`** ✅ - Master runner
 - Runs all test suites in order
-- Aggregates results (TOTAL:PASSED:FAILED)
+- Aggregates results with colorized summary (total suites, per-suite status, total tests)
 - Supports `--verbose` flag
 - Supports `--check-deps` to confirm `jq`, `shellcheck`, and `bat`
 - Exit code 0 if all pass, 1 if any fail
+- Used by CI workflow (`./tests/run_all_tests.sh --check-deps && ./tests/run_all_tests.sh`)
 
 ### Phase 3 Testing:
 ```bash
 ./tests/run_all_tests.sh
 ./tests/run_all_tests.sh --verbose
 ```
-**Result:** 17 new tests passing (2025-10-24) across errors + CLI. Combined runner reports all suites green.
+**Result:** 17 new tests passing (2025-10-24) across errors + CLI. Combined runner reports all suites green. GitHub Actions executes `./tests/run_all_tests.sh --check-deps && ./tests/run_all_tests.sh` on each push and PR.
 
 ---
 
@@ -164,6 +165,7 @@ After each phase:
 2. **Fix any failures** before proceeding
 3. **Commit changes** with message: `test(phase-N): add [description]`
 4. **Proceed to next phase** only when tests pass
+5. **CI hook:** GitHub Actions workflow `.github/workflows/tests.yml` runs `./tests/run_all_tests.sh --check-deps && ./tests/run_all_tests.sh` on pushes/PRs. Update the workflow if suite layout changes.
 
 ## **Total Test Coverage**
 - **Phase 1:** Infrastructure setup (no tests)
@@ -172,3 +174,11 @@ After each phase:
 - **Grand Total:** 37 automated tests
 
 Focused on critical functionality with minimal overhead.
+
+---
+
+## **CI Hook Integration** ✅
+- **Workflow:** `.github/workflows/tests.yml` runs on pushes to `main` and all PRs.
+- **Steps executed:** checkout, install (`jq`, `shellcheck`, `bat`), dependency check, full test suite.
+- **Environment:** uses Ubuntu runner defaults; no extra HOME configuration required.
+- **Next refinement:** add status badge to `README.md` and document optional pre-commit hook mirroring the CI commands.
