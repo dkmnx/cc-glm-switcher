@@ -8,9 +8,9 @@ A minimized, essential test suite with **3 phases** covering critical functional
 |-------|--------|-------|-------------|
 | **Phase 1** | ✅ **COMPLETED** | Infrastructure | Test framework, helpers, fixtures, docs |
 | **Phase 2** | ✅ **COMPLETED** | 20 tests | Core switching, backups, JSON validation |
-| **Phase 3** | ⏳ Pending | ~18 tests | Error handling, CLI options, master runner |
+| **Phase 3** | ✅ **COMPLETED** | 17 tests + runner | Error handling, CLI options, master runner |
 
-**Current Status:** Phase 2 test suite landed (core switching + backups). Phase 3 next.
+**Current Status:** All three phases implemented. Full suite and runner are green locally.
 
 ---
 
@@ -112,7 +112,7 @@ source tests/test_helper.sh && setup_test_env && teardown_test_env
 
 ### Test Suites:
 
-**`tests/test_errors.sh`** - ~10 tests
+**`tests/test_errors.sh`** ✅ - 9 tests
 
 **Dependency & File Errors** (5 tests):
 - Missing jq command detected
@@ -121,14 +121,13 @@ source tests/test_helper.sh && setup_test_env && teardown_test_env
 - Missing settings.json creates minimal valid one
 - Lock prevents concurrent execution
 
-**Input Validation** (5 tests):
+**Input Validation** (4 tests):
 - Invalid token format rejected
 - Empty ZAI_AUTH_TOKEN rejected
 - Invalid backup number shows error
 - Unknown command shows usage
-- Invalid restore selection rejected
 
-**`tests/test_cli.sh`** - ~8 tests
+**`tests/test_cli.sh`** ✅ - 8 tests
 
 **Command Parsing** (4 tests):
 - `cc` command switches to Claude Code
@@ -142,10 +141,11 @@ source tests/test_helper.sh && setup_test_env && teardown_test_env
 - `-h/--help` shows help
 - `-V/--version` shows version
 
-**`tests/run_all_tests.sh`** - Master runner
+**`tests/run_all_tests.sh`** ✅ - Master runner
 - Runs all test suites in order
 - Aggregates results (TOTAL:PASSED:FAILED)
 - Supports `--verbose` flag
+- Supports `--check-deps` to confirm `jq`, `shellcheck`, and `bat`
 - Exit code 0 if all pass, 1 if any fail
 
 ### Phase 3 Testing:
@@ -153,7 +153,7 @@ source tests/test_helper.sh && setup_test_env && teardown_test_env
 ./tests/run_all_tests.sh
 ./tests/run_all_tests.sh --verbose
 ```
-**Expected:** ~18 tests pass
+**Result:** 17 new tests passing (2025-10-24) across errors + CLI. Combined runner reports all suites green.
 
 ---
 
@@ -166,9 +166,9 @@ After each phase:
 4. **Proceed to next phase** only when tests pass
 
 ## **Total Test Coverage**
-- **Phase 1:** Infrastructure setup (no tests yet)
-- **Phase 2:** ~20 tests (core switching + backups)
-- **Phase 3:** ~18 tests (errors + CLI)
-- **Grand Total:** ~38 essential tests
+- **Phase 1:** Infrastructure setup (no tests)
+- **Phase 2:** 20 tests (core switching + backups)
+- **Phase 3:** 17 tests (errors + CLI) + master runner
+- **Grand Total:** 37 automated tests
 
 Focused on critical functionality with minimal overhead.

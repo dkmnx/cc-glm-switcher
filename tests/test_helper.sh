@@ -248,9 +248,9 @@ print_test_summary() {
     echo "========================================="
     echo "Test Summary"
     echo "========================================="
-    echo -e "${GREEN}Passed:${NC} $PASSED"
-    echo -e "${RED}Failed:${NC} $FAILED"
-    echo "Total:  $total"
+    echo -e "${GREEN}Passed :${NC} $PASSED"
+    echo -e "${RED}Failed :${NC} $FAILED"
+    echo "Total  : $total"
 
     if [[ $FAILED -eq 0 ]]; then
         echo -e "\n${GREEN}All tests passed!${NC}"
@@ -312,5 +312,5 @@ EOF
 # Register cleanup handlers on script load
 register_cleanup
 
-echo -e "${GREEN}Test helper loaded successfully${NC}"
+echo -e "\n${GREEN}Test helper loaded successfully${NC}"
 echo -e "${YELLOW}→${NC} Automatic cleanup registered (EXIT, INT, TERM)"
