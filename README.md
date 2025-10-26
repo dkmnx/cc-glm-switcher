@@ -1,7 +1,7 @@
 # Claude Code ↔ Z.AI GLM Model Switcher
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Shell Script](https://img.shields.io/badge/Shell_Script-%23121011.svg?logo=gnu-bash&logoColor=white)](https://www.gnu.org/software/bash/)
+[![ShellCheck](https://img.shields.io/badge/ShellCheck-Passing-brightgreen)](https://www.shellcheck.net/)
 [![CI](https://github.com/dkmnx/cc-glm-switcher/actions/workflows/ci.yml/badge.svg)](https://github.com/dkmnx/cc-glm-switcher/actions/workflows/ci.yml)
 
 **Current version:** 1.0.0
@@ -288,18 +288,22 @@ GitHub Actions automatically runs the test suite on every push to `main` and on 
 #### Reproducing the CI job locally
 
 - **Using `act`** (recommended):
+
   ```bash
   act push --job test
   ```
+
   `act` will run the workflow in a container that matches GitHub’s `ubuntu-latest` runner.
 
 - **Manual dry run** without extra tooling:
+
   ```bash
   sudo apt-get update
   sudo apt-get install -y jq shellcheck bat
   ./tests/run_all_tests.sh --check-deps
   ./tests/run_all_tests.sh
   ```
+
   Running the commands inside an Ubuntu container (`docker run -it --rm ubuntu:22.04 bash`) gives you a clean environment similar to CI.
 
 ## Troubleshooting
