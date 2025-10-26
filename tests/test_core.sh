@@ -22,6 +22,8 @@ write_env_file() {
 ZAI_AUTH_TOKEN=$token
 MAX_BACKUPS=$max_backups
 EOF
+    # Set secure permissions for test .env file
+    chmod 600 "$TEST_DIR/.env"
 }
 
 setup_core_test() {

@@ -40,6 +40,126 @@ atomic_move() {
     mv "$src" "$dest"
 }
 
+# ============================================================================
+# Security Functions
+# ============================================================================
+
+# Ensure secure file permissions
+ensure_secure_permissions() {
+    local file="$1"
+    local expected_perms="${2:-600}"
+
+    if [ ! -f "$file" ]; then
+        log "File does not exist: $file"
+        return 0
+    fi
+
+    local current_perms
+    current_perms=$(stat -c "%a" "$file" 2>/dev/null)
+
+    if [ "$current_perms" != "$expected_perms" ]; then
+        log "Setting secure permissions for $file: $expected_perms (was $current_perms)"
+        if ! chmod "$expected_perms" "$file"; then
+            log_error "Failed to set permissions for $file"
+            return 1
+        fi
+    else
+        log "File $file already has secure permissions: $current_perms"
+    fi
+
+    return 0
+}
+
+# Validate directory permissions
+validate_directory_permissions() {
+    local directory="$1"
+    local expected_perms="${2:-700}"
+
+    if [ ! -d "$directory" ]; then
+        log "Directory does not exist: $directory"
+        return 0
+    fi
+
+    local current_perms
+    current_perms=$(stat -c "%a" "$directory" 2>/dev/null)
+
+    if [ "$current_perms" != "$expected_perms" ]; then
+        log "Setting secure permissions for directory $directory: $expected_perms (was $current_perms)"
+        if ! chmod "$expected_perms" "$directory"; then
+            log_error "Failed to set directory permissions for $directory"
+            return 1
+        fi
+    fi
+
+    return 0
+}
+
+# Check file ownership
+validate_file_ownership() {
+    local file="$1"
+    local expected_owner="${2:-$(id -u)}"
+
+    if [ ! -f "$file" ]; then
+        return 0
+    fi
+
+    local current_owner
+    current_owner=$(stat -c "%u" "$file" 2>/dev/null)
+
+    if [ "$current_owner" != "$expected_owner" ]; then
+        log_error "File $file is owned by different user (uid: $current_owner, expected: $expected_owner)"
+        return 1
+    fi
+
+    return 0
+}
+
+# Validate directory ownership
+validate_directory_ownership() {
+    local directory="$1"
+    local expected_owner="${2:-$(id -u)}"
+
+    if [ ! -d "$directory" ]; then
+        return 0
+    fi
+
+    local current_owner
+    current_owner=$(stat -c "%u" "$directory" 2>/dev/null)
+
+    if [ "$current_owner" != "$expected_owner" ]; then
+        log_error "Directory $directory is owned by different user (uid: $current_owner, expected: $expected_owner)"
+        return 1
+    fi
+
+    return 0
+}
+
+# Security validation for configuration files
+validate_config_file_security() {
+    local config_file="$1"
+
+    if [ ! -f "$config_file" ]; then
+        return 0
+    fi
+
+    log "Validating security of configuration file: $config_file"
+
+    # Check file permissions
+    if ! ensure_secure_permissions "$config_file" "600"; then
+        log_error "Configuration file has insecure permissions: $config_file"
+        return 1
+    fi
+
+    # Check file ownership
+    if ! validate_file_ownership "$config_file"; then
+        log_error "Configuration file has invalid ownership: $config_file"
+        return 1
+    fi
+
+    log "Configuration file security validation passed: $config_file"
+    return 0
+}
+
 # Load configuration from .env file
 
 # shellcheck disable=SC2329  # Function is invoked later
@@ -55,6 +175,28 @@ load_config() {
     fi
 
     if [ -n "$env_file" ]; then
+        # Security: Validate .env file before loading
+        log "Performing security validation on .env file: $env_file"
+
+        # Check file permissions without fixing them
+        local current_perms
+        current_perms=$(stat -c "%a" "$env_file" 2>/dev/null)
+        if [ "$current_perms" != "600" ]; then
+            log_error "Refusing to load .env file with insecure permissions: $env_file"
+            log_error "Current permissions: $current_perms"
+            log_error "Expected permissions: 600 (read/write for owner only)"
+            log_error "Run: chmod 600 $env_file"
+            exit 1
+        fi
+
+        # Check file ownership
+        if ! validate_file_ownership "$env_file"; then
+            log_error "Refusing to load .env file owned by different user: $env_file"
+            exit 1
+        fi
+
+        log "Security validation passed for .env file: $env_file"
+
         set -a
         # shellcheck disable=SC1090
         source "$env_file"
@@ -553,6 +695,19 @@ fi
 # check if configs backup directory exists, if not create it
 if [ ! -d "$CONFIG_DIR" ]; then
     mkdir -p "$CONFIG_DIR"
+    log "Created configuration directory: $CONFIG_DIR"
+fi
+
+# Security: Ensure configuration directory has secure permissions
+if ! validate_directory_permissions "$CONFIG_DIR" "700"; then
+    log_error "Failed to set secure permissions for configuration directory: $CONFIG_DIR"
+    exit 1
+fi
+
+# Security: Ensure configuration directory ownership is correct
+if ! validate_directory_ownership "$CONFIG_DIR"; then
+    log_error "Configuration directory has invalid ownership: $CONFIG_DIR"
+    exit 1
 fi
 
 timestamp=$(date +"%Y%m%d_%H%M%S")

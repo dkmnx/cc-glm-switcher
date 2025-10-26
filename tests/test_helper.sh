@@ -273,6 +273,8 @@ create_test_env_file() {
 ZAI_AUTH_TOKEN=test_token_123456
 MAX_BACKUPS=5
 EOF
+    # Set secure permissions for test .env file
+    chmod 600 "$env_file"
 }
 
 # create_test_settings: Create a minimal settings.json for testing

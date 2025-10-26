@@ -23,6 +23,8 @@ write_env_file() {
 ZAI_AUTH_TOKEN=$token
 MAX_BACKUPS=$max_backups
 EOF
+    # Set secure permissions for test .env file
+    chmod 600 "$TEST_DIR/.env"
 }
 
 setup_error_test() {
@@ -51,9 +53,10 @@ finish_error_test() {
 run_switcher_capture() {
     set +e
     RUN_OUTPUT=$(
-        cd "$TEST_DIR" && \
+        # Run from /tmp to avoid local .env file interference
+        cd /tmp && \
         ROOT_CC="$ROOT_CC" ROOT_SCRIPT="$ROOT_SCRIPT" CONFIG_DIR="$CONFIG_DIR" \
-            LOCK_FILE="$LOCK_FILE" PATH="$PATH" \
+            TEST_DIR="$TEST_DIR" LOCK_FILE="$LOCK_FILE" PATH="$PATH" \
             "$REPO_ROOT/cc_glm_switcher.sh" "$@" 2>&1
     )
     RUN_STATUS=$?
@@ -192,6 +195,7 @@ test_empty_token_rejected() {
 ZAI_AUTH_TOKEN=
 MAX_BACKUPS=5
 EOF
+        chmod 600 "$TEST_DIR/.env"
         run_switcher_capture glm
         if [ "$RUN_STATUS" -eq 0 ]; then
             status=1
