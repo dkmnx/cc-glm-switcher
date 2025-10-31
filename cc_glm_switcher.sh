@@ -30,7 +30,7 @@ case "${1:-}" in
         exit 0
         ;;
     restore)
-        latest_backup=$(ls -1t "$CONFIG_DIR"/backup_*.json 2>/dev/null | head -1)
+        latest_backup=$(find "$CONFIG_DIR" -name "backup_*.json" -type f -printf "%T@ %p\n" 2>/dev/null | sort -nr | head -1 | cut -d' ' -f2-)
         if [ -z "$latest_backup" ]; then
             echo "Error: No backup files found." >&2
             exit 1
@@ -73,9 +73,10 @@ mkdir -p "$CONFIG_DIR" "$ROOT_CC"
 # Create backup and cleanup old ones
 backup_file="$CONFIG_DIR/backup_$(date +%s).json"
 cp "$ROOT_CC/settings.json" "$backup_file" 2>/dev/null || echo '{}' > "$backup_file"
-ls -1t "$CONFIG_DIR"/backup_*.json 2>/dev/null | tail -n +4 | xargs rm -f 2>/dev/null || true
+find "$CONFIG_DIR" -name "backup_*.json" -type f -printf "%T@ %p\n" 2>/dev/null | sort -nr | tail -n +3 | cut -d' ' -f2- | xargs rm -f 2>/dev/null || true
 
 # Load .env if exists
+# shellcheck source=/dev/null
 if [ -f ".env" ]; then
     set -a
     source ".env"

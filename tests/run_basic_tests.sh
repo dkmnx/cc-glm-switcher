@@ -22,7 +22,7 @@ fi
 chmod +x "$TEST_SCRIPT"
 
 # Change to project directory and run the basic test suite
-cd "$PROJECT_DIR"
+cd "$PROJECT_DIR" || exit 1
 bash "$TEST_SCRIPT"
 TEST_EXIT_CODE=$?
 

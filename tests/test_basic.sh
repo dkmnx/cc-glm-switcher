@@ -68,11 +68,9 @@ fi
 # Test without auth token (should fail)
 if ! ZAI_AUTH_TOKEN="" $SCRIPT glm > /dev/null 2>&1; then
     echo -e "${GREEN}✓ GLM mode properly requires authentication${NC}"
-    TEST_RESULT=0
 else
     echo -e "${RED}✗ GLM mode should require authentication${NC}"
     ((FAILURES++))
-    TEST_RESULT=1
 fi
 
 # Restore .env file if it was moved
@@ -117,16 +115,13 @@ if ZAI_AUTH_TOKEN="test_valid_token_12345" $SCRIPT glm > /dev/null 2>&1; then
     # Validate the created JSON is valid
     if [[ -f "$HOME/.claude/settings.json" ]] && jq empty "$HOME/.claude/settings.json" 2>/dev/null; then
         echo -e "${GREEN}✓ GLM mode creates valid JSON${NC}"
-        JSON_VALID_PASS=1
     else
         echo -e "${RED}✗ GLM mode created invalid JSON${NC}"
         ((FAILURES++))
-        JSON_VALID_PASS=0
     fi
 else
     echo -e "${RED}✗ GLM mode failed during JSON test${NC}"
     ((FAILURES++))
-    JSON_VALID_PASS=0
 fi
 
 # Test 8b: Invalid JSON handling
@@ -138,11 +133,9 @@ echo '{"invalid": json, "missing": quotes}' > "$HOME/.claude/settings.json"
 if $SCRIPT show > /dev/null 2>&1; then
     # Show command should handle invalid JSON (fallback to cat)
     echo -e "${GREEN}✓ Show command handles invalid JSON gracefully${NC}"
-    JSON_INVALID_PASS=1
 else
     echo -e "${RED}✗ Show command failed on invalid JSON${NC}"
     ((FAILURES++))
-    JSON_INVALID_PASS=0
 fi
 
 # Test 8c: Empty JSON handling
@@ -150,11 +143,9 @@ echo "  Testing empty JSON handling..."
 echo '{}' > "$HOME/.claude/settings.json"
 if $SCRIPT show > /dev/null 2>&1; then
     echo -e "${GREEN}✓ Show command handles empty JSON${NC}"
-    JSON_EMPTY_PASS=1
 else
     echo -e "${RED}✗ Show command failed on empty JSON${NC}"
     ((FAILURES++))
-    JSON_EMPTY_PASS=0
 fi
 
 # Cleanup test environment
