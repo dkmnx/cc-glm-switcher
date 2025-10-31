@@ -351,7 +351,7 @@ cleanup_old_tests 1
 
 When running `./tests/run_all_tests.sh`, you'll see output like:
 
-```
+```bash
 =========================================
 Test Suite Results
 =========================================
@@ -402,18 +402,21 @@ rm -f "/tmp/test_settings.json"
 The test suite covers:
 
 ### Phase 1: Infrastructure ✅ COMPLETED
+
 - Test framework setup
 - Assertion functions
 - Environment isolation
 - Cleanup mechanisms
 
 ### Phase 2: Core Functionality ✅ COMPLETED (20 tests)
+
 - Model switching (CC ↔ GLM)
 - Backup creation and validation
 - JSON validation
 - Environment variable handling
 
 ### Phase 3: Error Handling & CLI ✅ COMPLETED (17 tests)
+
 - Dependency validation
 - Input validation
 - CLI option parsing
@@ -424,10 +427,12 @@ The test suite covers:
 ## CI/CD Integration
 
 Tests are automatically run via GitHub Actions on:
+
 - Every push to `main` branch
 - All pull requests
 
 The CI workflow mirrors the local test execution:
+
 ```bash
 ./tests/run_all_tests.sh --check-deps && ./tests/run_all_tests.sh
 ```
