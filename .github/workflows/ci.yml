@@ -24,5 +24,21 @@ jobs:
       - name: Verify tool availability
         run: ./tests/run_all_tests.sh --check-deps
 
-      - name: Run full test suite
-        run: ./tests/run_all_tests.sh
+       - name: Run full test suite
+         run: ./tests/run_all_tests.sh
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install shellcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+
+      - name: Run linting
+        run: ./tests/test_lint.sh
+
