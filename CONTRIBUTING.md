@@ -6,31 +6,38 @@ We welcome contributions! Please follow these guidelines to ensure a smooth revi
 
 1. **Fork the repository** and clone your fork locally
 2. **Create a feature branch** from the main branch:
+
    ```bash
    git checkout -b feature/your-feature-name
    # or
    git checkout -b fix/issue-description
    ```
+
 3. **Make your changes** following the guidelines below
 4. **Test thoroughly** before submitting:
+
    ```bash
    # Run the complete test suite
-   ./tests/run_all_tests.sh
+   ./tests/run_basic_tests.sh
 
-   # Run with verbose output for debugging
-   ./tests/run_all_tests.sh --verbose
+   # Run tests directly for debugging
+   ./tests/test_basic.sh
 
-   # Test with dry-run functionality
-   ./cc_glm_switcher.sh glm --dry-run
-   ./cc_glm_switcher.sh cc --dry-run
+   # Test basic functionality
+   ./cc_glm_switcher.sh glm
+   ./cc_glm_switcher.sh cc
+   ./cc_glm_switcher.sh show
    ```
+
 5. **Ensure all tests pass** before submitting your PR
 6. **Submit a pull request** with a clear description of your changes
 
 ## Code Quality Standards
 
 ### Shell Script Guidelines
-- **Use shellcheck**: All shell scripts must pass shellcheck validation:
+
+- **Use shellcheck**: All shell scripts should pass shellcheck validation (info-level warnings are acceptable):
+
   ```bash
   # Check the main script
   shellcheck cc_glm_switcher.sh
@@ -38,20 +45,23 @@ We welcome contributions! Please follow these guidelines to ensure a smooth revi
   # Check test scripts
   shellcheck tests/*.sh
   ```
-- **Follow best practices**:
-  - Use `set -euo pipefail` for error handling
+
+- **Follow good practices**:
   - Quote variables properly: `"$VAR"` instead of `$VAR`
-  - Use `readonly` for constants
   - Add comments for complex logic
   - Use functions for reusable code
+  - Handle errors appropriately
+  - Keep code simple and readable
 
 ### Code Style
+
 - **Indentation**: Use 4 spaces (no tabs)
 - **Line length**: Keep lines under 100 characters when possible
 - **Naming conventions**:
-  - Functions: `snake_case` with descriptive names
-  - Variables: `UPPER_SNAKE_CASE` for constants, `lower_snake_case` for variables
+  - Constants: `UPPER_SNAKE_CASE` for script-wide configuration
+  - Variables: `lower_snake_case` for local variables
   - Files: `lowercase-with-dashes.sh`
+- **Structure**: Keep scripts simple and focused on single purpose
 
 ## Commit Message Standards
 
@@ -66,6 +76,7 @@ We follow the [Conventional Commits](https://www.conventionalcommits.org/) speci
 ```
 
 ### Commit Types
+
 - `feat`: New features or functionality
 - `fix`: Bug fixes
 - `docs`: Documentation changes
@@ -75,6 +86,7 @@ We follow the [Conventional Commits](https://www.conventionalcommits.org/) speci
 - `chore`: Maintenance tasks, dependency updates, etc.
 
 ### Examples
+
 ```bash
 feat: add GLM model switching functionality
 fix: resolve backup file permission issues
@@ -85,6 +97,7 @@ chore: update dependencies in README
 ```
 
 ### Detailed Example
+
 ```bash
 feat(backup): implement backup retention policy
 
@@ -102,7 +115,8 @@ Closes #42
 - **Update existing tests** if your changes affect current behavior
 - **Ensure 100% test pass rate** before submitting
 - **Test edge cases** and error conditions
-- **Use the test framework** from `tests/test_helper.sh`
+- **Follow the simple test structure** from `tests/test_basic.sh`
+- **Focus on core functionality** validation with clear assertions
 
 ## Pull Request Guidelines
 
