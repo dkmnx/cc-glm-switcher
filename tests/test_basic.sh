@@ -8,6 +8,10 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 SCRIPT="$PROJECT_DIR/cc_glm_switcher.sh"
 FAILURES=0
 
+# Test environment setup
+TEST_HOME="$PROJECT_DIR/test_home"
+TEST_CLAUDE_DIR="$TEST_HOME/.claude"
+
 # Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -16,6 +20,33 @@ NC='\033[0m'
 
 echo "Basic Test Suite for cc_glm_switcher.sh"
 echo "======================================="
+
+# Setup test environment
+setup_test_env() {
+    echo "Setting up test environment..."
+
+    # Create test home directory
+    mkdir -p "$TEST_CLAUDE_DIR"
+
+    # Create initial empty settings.json
+    echo '{}' > "$TEST_CLAUDE_DIR/settings.json"
+
+    # Set HOME to test directory for this script
+    export HOME="$TEST_HOME"
+
+    echo "✓ Test environment created at $TEST_HOME"
+}
+
+# Cleanup test environment
+cleanup_test_env() {
+    if [[ -d "$TEST_HOME" ]]; then
+        rm -rf "$TEST_HOME"
+        echo "✓ Test environment cleaned up"
+    fi
+}
+
+# Setup environment
+setup_test_env
 
 # Test 1: Script exists
 echo -e "\n${YELLOW}1. Testing script existence...${NC}"
@@ -156,6 +187,9 @@ else
     # If no backup existed, create empty settings
     echo '{}' > "$HOME/.claude/settings.json"
 fi
+
+# Clean up test home directory
+cleanup_test_env
 
 # Summary
 echo -e "\n======================================="
