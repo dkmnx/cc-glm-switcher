@@ -1,5 +1,4 @@
 .env
 configs/*backup*.json
 test_*.json
-.claude/
 install.log
