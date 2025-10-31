@@ -128,7 +128,7 @@ setup_env() {
     fi
 }
 
-# Make script executable
+# Make script executable and set secure permissions
 setup_script() {
     if [ -f "$SCRIPT_NAME" ]; then
         log_info "Making $SCRIPT_NAME executable..."
@@ -137,6 +137,28 @@ setup_script() {
     else
         log_error "$SCRIPT_NAME not found in current directory"
         exit 1
+    fi
+}
+
+# Set secure permissions for configuration files
+setup_permissions() {
+    log_info "Setting secure permissions..."
+
+    # Set secure permissions for .env file (read/write for owner only)
+    if [ -f ".env" ]; then
+        chmod 600 .env
+        log_success ".env file permissions set to 600 (owner read/write only)"
+    fi
+
+    # Create configs directory with secure permissions if it doesn't exist
+    if [ ! -d "configs" ]; then
+        mkdir -p configs
+        chmod 700 configs
+        log_success "configs directory created with 700 permissions (owner access only)"
+    else
+        # Ensure existing configs directory has secure permissions
+        chmod 700 configs 2>/dev/null || true
+        log_info "configs directory permissions verified"
     fi
 }
 
@@ -206,6 +228,9 @@ main() {
 
     # Setup script
     setup_script
+
+    # Setup permissions
+    setup_permissions
 
     # Validate
     if validate_setup; then
