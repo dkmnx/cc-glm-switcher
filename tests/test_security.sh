@@ -156,7 +156,7 @@ test_config_directory_security() {
 
     # Set CONFIG_DIR to test directory
     local test_config_dir="$TEST_DIR/configs"
-    CONFIG_DIR="$test_config_dir"
+    # CONFIG_DIR="$test_config_dir"  # Not needed for this test
 
     # Create directory with insecure permissions
     mkdir -p "$test_config_dir"
@@ -260,6 +260,7 @@ test_missing_directories_security() {
     cd /tmp && ROOT_SCRIPT="$TEST_DIR" TEST_DIR="$TEST_DIR" "$ROOT_SCRIPT/cc_glm_switcher.sh" glm --dry-run >/dev/null 2>&1 || true
 
     # Check that directories were created with secure permissions
+    local claude_perms
     local claude_perms
     claude_perms=$(stat -c "%a" "$TEST_DIR/.claude" 2>/dev/null || echo "missing")
     local config_perms
