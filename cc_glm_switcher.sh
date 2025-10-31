@@ -531,6 +531,9 @@ while [[ $# -gt 0 ]]; do
         -V|--version)
             echo "$SCRIPT_NAME v$SCRIPT_VERSION"
             echo "Repository: https://github.com/dkmnx/cc-glm-switcher"
+            echo ""
+            echo "A robust shell script utility for switching between Claude Code and Z.AI GLM models."
+            echo "Licensed under MIT. Use at your own risk."
             exit 0
             ;;
         -h|--help)
