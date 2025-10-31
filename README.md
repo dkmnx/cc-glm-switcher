@@ -104,6 +104,17 @@ If you prefer manual setup or the automated script doesn't work on your system:
    MAX_BACKUPS=5
    ```
 
+6. **Set secure permissions** for your configuration files:
+
+   ```bash
+   # Protect your API token
+   chmod 600 .env
+
+   # Create configs directory with secure permissions
+   mkdir -p configs
+   chmod 700 configs
+   ```
+
 ## Usage
 
 ### Basic Model Switching
@@ -340,8 +351,9 @@ When switching to GLM mode, the script adds these environment variables (preserv
 ## Security
 
 - **Token security**: Never commit your `.env` file to version control
-- **File permissions**: Script uses secure temporary file creation
+- **File permissions**: `.env` file should be `600` (owner read/write only), `configs/` directory should be `700` (owner access only)
 - **Input validation**: Tokens are validated for basic format requirements
+- **Secure temporary files**: Script uses secure temporary file creation
 
 ## Testing
 
