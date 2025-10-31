@@ -6,27 +6,6 @@ on:
   pull_request:
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y jq shellcheck
-          # Install bat from GitHub releases since it's not in Ubuntu repos
-          wget -q https://github.com/sharkdp/bat/releases/download/v0.24.0/bat_0.24.0_amd64.deb
-          sudo dpkg -i bat_0.24.0_amd64.deb
-
-      - name: Verify tool availability
-        run: ./tests/run_all_tests.sh --check-deps
-
-       - name: Run full test suite
-         run: ./tests/run_all_tests.sh
-
   lint:
     runs-on: ubuntu-latest
 
@@ -41,4 +20,26 @@ jobs:
 
       - name: Run linting
         run: ./tests/test_lint.sh
+
+  test:
+    runs-on: ubuntu-latest
+    needs: lint
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+          # Install bat from GitHub releases since it's not in Ubuntu repos
+          wget -q https://github.com/sharkdp/bat/releases/download/v0.24.0/bat_0.24.0_amd64.deb
+          sudo dpkg -i bat_0.24.0_amd64.deb
+
+      - name: Verify tool availability
+        run: ./tests/run_all_tests.sh --check-deps
+
+      - name: Run full test suite
+        run: ./tests/run_all_tests.sh
 
