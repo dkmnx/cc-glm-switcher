@@ -44,15 +44,9 @@ test_shellcheck_linting() {
 ########################################
 
 main() {
-    set +e
     run_test test_shellcheck_linting || true
-    set -e
 }
 
 main
 
-set +e
 print_test_summary
-exit_code=$?
-set -e
-exit $exit_code
