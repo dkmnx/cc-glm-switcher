@@ -6,6 +6,7 @@
 set -euo pipefail
 
 # Source test helper
+# shellcheck source=tests/test_helper.sh
 source "$(dirname "${BASH_SOURCE[0]}")/test_helper.sh"
 
 # Test secure file permissions function
@@ -13,11 +14,13 @@ test_ensure_secure_permissions() {
     setup_test_env
 
     # Create test file with insecure permissions
+    # shellcheck disable=SC2153  # TEST_DIR is set by setup_test_env
     local test_file="$TEST_DIR/test_config.txt"
     echo "test data" > "$test_file"
     chmod 644 "$test_file"  # Insecure permissions
 
     # Source the security functions for testing
+    # shellcheck source=tests/security_functions.sh
     source "$(dirname "${BASH_SOURCE[0]}")/security_functions.sh"
 
     # Test permission fixing
@@ -53,6 +56,7 @@ test_validate_file_ownership() {
     chmod 600 "$test_file"
 
     # Source the security functions for testing
+    # shellcheck source=tests/security_functions.sh
     source "$(dirname "${BASH_SOURCE[0]}")/security_functions.sh"
 
     local current_uid
@@ -87,6 +91,7 @@ test_validate_directory_permissions() {
     chmod 755 "$test_dir"  # Insecure permissions
 
     # Source the security functions for testing
+    # shellcheck source=tests/security_functions.sh
     source "$(dirname "${BASH_SOURCE[0]}")/security_functions.sh"
 
     # Test permission fixing
@@ -117,7 +122,8 @@ test_env_file_security_validation() {
 
     # Run script from /tmp to avoid local .env file interference
     local root_script_var="${ROOT_SCRIPT:-$HOME/Documents/scripts/cc-glm-switcher}"
-    output=$(cd /tmp && ROOT_SCRIPT="$TEST_DIR" TEST_DIR="$TEST_DIR" "$root_script_var/cc_glm_switcher.sh" glm 2>&1 || true)
+    local test_dir_value="$TEST_DIR"
+    output=$(cd /tmp && ROOT_SCRIPT="$test_dir_value" TEST_DIR="$test_dir_value" "$root_script_var/cc_glm_switcher.sh" glm 2>&1 || true)
     exit_code=$?
 
     # Should fail due to insecure permissions
@@ -132,7 +138,8 @@ test_env_file_security_validation() {
 
     # Now test with secure permissions - should work
     chmod 600 "$TEST_DIR/.env"
-    output=$(cd /tmp && ROOT_SCRIPT="$TEST_DIR" TEST_DIR="$TEST_DIR" "$root_script_var/cc_glm_switcher.sh" glm --dry-run 2>&1 || true)
+    local test_dir_value="$TEST_DIR"
+    output=$(cd /tmp && ROOT_SCRIPT="$test_dir_value" TEST_DIR="$test_dir_value" "$root_script_var/cc_glm_switcher.sh" glm --dry-run 2>&1 || true)
     exit_code=$?
 
     if [ $exit_code -eq 0 ] || [[ "$output" == *"DRY RUN"* ]]; then
@@ -152,6 +159,7 @@ test_config_directory_security() {
     setup_test_env
 
     # Source the security functions for testing
+    # shellcheck source=tests/security_functions.sh
     source "$(dirname "${BASH_SOURCE[0]}")/security_functions.sh"
 
     # Set CONFIG_DIR to test directory
@@ -180,6 +188,7 @@ test_config_file_security_validation() {
     setup_test_env
 
     # Source the security functions for testing
+    # shellcheck source=tests/security_functions.sh
     source "$(dirname "${BASH_SOURCE[0]}")/security_functions.sh"
 
     # Create test configuration file
@@ -218,7 +227,8 @@ test_backup_file_security() {
     chmod 600 "$TEST_DIR/.env"
 
     # Run script to create backup
-    cd /tmp && ROOT_SCRIPT="$TEST_DIR" TEST_DIR="$TEST_DIR" "$ROOT_SCRIPT/cc_glm_switcher.sh" glm --dry-run >/dev/null 2>&1 || true
+    local test_dir_value="$TEST_DIR"
+    cd /tmp && ROOT_SCRIPT="$test_dir_value" TEST_DIR="$test_dir_value" "$test_dir_value/cc_glm_switcher.sh" glm --dry-run >/dev/null 2>&1 || true
 
     # Check if backup files were created with secure permissions
     local backup_files
@@ -257,12 +267,10 @@ test_missing_directories_security() {
     chmod 600 "$TEST_DIR/.env"
 
     # Test that script creates directories with secure permissions
-    cd /tmp && ROOT_SCRIPT="$TEST_DIR" TEST_DIR="$TEST_DIR" "$ROOT_SCRIPT/cc_glm_switcher.sh" glm --dry-run >/dev/null 2>&1 || true
+    local test_dir_value="$TEST_DIR"
+    cd /tmp && ROOT_SCRIPT="$test_dir_value" TEST_DIR="$test_dir_value" "$test_dir_value/cc_glm_switcher.sh" glm --dry-run >/dev/null 2>&1 || true
 
     # Check that directories were created with secure permissions
-    local claude_perms
-    local claude_perms
-    claude_perms=$(stat -c "%a" "$TEST_DIR/.claude" 2>/dev/null || echo "missing")
     local config_perms
     config_perms=$(stat -c "%a" "$TEST_DIR/configs" 2>/dev/null || echo "missing")
 

@@ -5,40 +5,23 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Source test helper
+# shellcheck source=tests/test_helper.sh
 source "$SCRIPT_DIR/test_helper.sh"
 
 # Test function
+# shellcheck disable=SC2329  # Function is invoked indirectly via run_test
 test_shellcheck_linting() {
-    local script_files=("$REPO_ROOT/cc_glm_switcher.sh" "$REPO_ROOT/install.sh")
+    echo "Running shellcheck on all scripts..."
 
-    echo "Running shellcheck on main scripts..."
+    # Run the same shellcheck command used in code review
+    if ! shellcheck cc_glm_switcher.sh install.sh tests/*.sh; then
+        echo "shellcheck found issues"
+        return 1
+    fi
 
-    for script in "${script_files[@]}"; do
-        if [[ -f "$script" ]]; then
-            if ! shellcheck --severity=error "$script"; then
-                echo "shellcheck errors found in $script"
-                return 1
-            fi
-        else
-            echo "Script file $script not found"
-            return 1
-        fi
-    done
-
-    echo "Running shellcheck on test files..."
-
-    # Use find to get all test_*.sh files
-    while IFS= read -r -d '' test_file; do
-        if ! shellcheck --severity=error "$test_file"; then
-            echo "shellcheck errors found in $test_file"
-            return 1
-        fi
-    done < <(find "$REPO_ROOT/tests" -name "test_*.sh" -type f -print0)
-
-    echo "All shell scripts passed linting"
+    echo "All shell scripts passed linting with no warnings"
     return 0
 }
 
