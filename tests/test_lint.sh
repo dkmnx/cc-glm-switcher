@@ -36,7 +36,7 @@ test_shellcheck_linting() {
             echo "shellcheck errors found in $test_file"
             return 1
         fi
-    done < <(find tests -name "test_*.sh" -type f -print0)
+    done < <(find "$REPO_ROOT/tests" -name "test_*.sh" -type f -print0)
 
     echo "All shell scripts passed linting"
     return 0
