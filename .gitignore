@@ -2,3 +2,4 @@
 configs/settings_backup_*.json
 test_*.json
 .claude/
+install.log
