@@ -48,7 +48,7 @@ test_shellcheck_linting() {
 
 main() {
     set +e
-    run_test test_shellcheck_linting || true
+    run_test test_shellcheck_linting
     set -e
 }
 
