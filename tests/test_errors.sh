@@ -83,6 +83,7 @@ test_missing_jq_detected() {
             echo "Missing jq: expected error message, got: $RUN_OUTPUT"
         fi
     } || status=$?
+        # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_error_test
     return "$status"
 }
@@ -101,6 +102,7 @@ test_missing_env_file_for_glm() {
             echo "Missing .env: expected error message, got: $RUN_OUTPUT"
         fi
     } || status=$?
+        # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_error_test
     return "$status"
 }
@@ -119,6 +121,7 @@ test_corrupted_settings_abort_operation() {
             echo "Corrupted settings: missing validation message"
         fi
     } || status=$?
+        # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_error_test
     return "$status"
 }
@@ -140,6 +143,7 @@ test_missing_settings_creates_minimal_file() {
             echo "Missing settings: expected empty object"
         fi
     } || status=$?
+        # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_error_test
     return "$status"
 }
@@ -159,6 +163,7 @@ test_lock_prevents_concurrent_execution() {
             echo "Lock: expected lock error message"
         fi
     } || status=$?
+        # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_error_test
     return "$status"
 }
@@ -182,6 +187,7 @@ test_invalid_token_format_rejected() {
             echo "Invalid token: expected format error message"
         fi
     } || status=$?
+        # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_error_test
     return "$status"
 }
@@ -205,6 +211,7 @@ EOF
             echo "Empty token: expected missing token error"
         fi
     } || status=$?
+        # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_error_test
     return "$status"
 }
@@ -227,12 +234,14 @@ test_invalid_backup_number_errors() {
             elif [[ "$RUN_OUTPUT" != *"Invalid backup number"* ]]; then
                 status=1
                 echo "Invalid backup: expected error message"
-            fi
-        fi
-    } || status=$?
-    finish_error_test
-    return "$status"
-}
+             fi
+         fi
+     } || status=$?
+         # shellcheck disable=SC2317  # Code after } || is reachable when block fails
+     # shellcheck disable=SC2317  # Code after } || is reachable when block fails
+     finish_error_test
+     return "$status"
+ }
 
 test_unknown_command_shows_usage() {
     setup_error_test
@@ -242,14 +251,16 @@ test_unknown_command_shows_usage() {
         if [ "$RUN_STATUS" -eq 0 ]; then
             status=1
             echo "Unknown command: succeeded unexpectedly"
-        elif [[ "$RUN_OUTPUT" != *"Error: Unknown option foobar"* ]]; then
-            status=1
-            echo "Unknown command: unexpected output"
-        fi
-    } || status=$?
-    finish_error_test
-    return "$status"
-}
+         elif [[ "$RUN_OUTPUT" != *"Error: Unknown option foobar"* ]]; then
+             status=1
+             echo "Unknown command: unexpected output"
+         fi
+     } || status=$?
+         # shellcheck disable=SC2317  # Code after } || is reachable when block fails
+     # shellcheck disable=SC2317  # Code after } || is reachable when block fails
+     finish_error_test
+     return "$status"
+ }
 
 ########################################
 # Test Runner

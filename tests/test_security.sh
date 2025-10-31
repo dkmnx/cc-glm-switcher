@@ -123,6 +123,7 @@ test_env_file_security_validation() {
     # Run script from /tmp to avoid local .env file interference
     local root_script_var="${ROOT_SCRIPT:-$HOME/Documents/scripts/cc-glm-switcher}"
     local test_dir_value="$TEST_DIR"
+    # shellcheck disable=SC2015  # || true is intentional to prevent script failure
     output=$(cd /tmp && ROOT_SCRIPT="$test_dir_value" TEST_DIR="$test_dir_value" "$root_script_var/cc_glm_switcher.sh" glm 2>&1 || true)
     exit_code=$?
 
@@ -139,6 +140,7 @@ test_env_file_security_validation() {
     # Now test with secure permissions - should work
     chmod 600 "$TEST_DIR/.env"
     local test_dir_value="$TEST_DIR"
+    # shellcheck disable=SC2015  # || true is intentional to prevent script failure
     output=$(cd /tmp && ROOT_SCRIPT="$test_dir_value" TEST_DIR="$test_dir_value" "$root_script_var/cc_glm_switcher.sh" glm --dry-run 2>&1 || true)
     exit_code=$?
 
@@ -228,6 +230,7 @@ test_backup_file_security() {
 
     # Run script to create backup
     local test_dir_value="$TEST_DIR"
+    # shellcheck disable=SC2015  # || true is intentional to prevent script failure
     cd /tmp && ROOT_SCRIPT="$test_dir_value" TEST_DIR="$test_dir_value" "$test_dir_value/cc_glm_switcher.sh" glm --dry-run >/dev/null 2>&1 || true
 
     # Check if backup files were created with secure permissions
@@ -268,6 +271,7 @@ test_missing_directories_security() {
 
     # Test that script creates directories with secure permissions
     local test_dir_value="$TEST_DIR"
+    # shellcheck disable=SC2015  # || true is intentional to prevent script failure
     cd /tmp && ROOT_SCRIPT="$test_dir_value" TEST_DIR="$test_dir_value" "$test_dir_value/cc_glm_switcher.sh" glm --dry-run >/dev/null 2>&1 || true
 
     # Check that directories were created with secure permissions

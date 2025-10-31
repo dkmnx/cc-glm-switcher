@@ -80,6 +80,7 @@ test_cli_cc_switch_outputs_success() {
             echo "CLI cc: expected success message"
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_cli_test
     return "$status"
 }
@@ -99,6 +100,7 @@ test_cli_glm_switch_outputs_success() {
             echo "CLI glm: expected success message"
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_cli_test
     return "$status"
 }
@@ -131,6 +133,7 @@ test_cli_list_command_lists_backups() {
             fi
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_cli_test
     return "$status"
 }
@@ -165,6 +168,7 @@ EOF
             fi
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_cli_test
     return "$status"
 }
@@ -187,6 +191,7 @@ test_cli_verbose_emits_info_messages() {
             echo "CLI verbose: expected info messages"
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_cli_test
     return "$status"
 }
@@ -210,6 +215,7 @@ test_cli_dry_run_makes_no_changes() {
             echo "CLI dry run: settings were modified"
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_cli_test
     return "$status"
 }
@@ -227,6 +233,7 @@ test_cli_help_shows_usage() {
             echo "CLI help: usage not displayed"
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_cli_test
     return "$status"
 }
@@ -244,6 +251,7 @@ test_cli_version_displays_version() {
             echo "CLI version: version string missing"
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_cli_test
     return "$status"
 }

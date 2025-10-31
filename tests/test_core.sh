@@ -100,6 +100,7 @@ test_switch_to_glm_adds_required_env_vars() {
             fi
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_core_test
     return "$status"
 }
@@ -117,6 +118,7 @@ test_switch_to_glm_sets_correct_endpoint() {
             echo "GLM switch: incorrect API endpoint"
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_core_test
     return "$status"
 }
@@ -134,6 +136,7 @@ test_switch_to_glm_sets_provider_zhipu() {
             echo "GLM switch: provider not set to zhipu"
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_core_test
     return "$status"
 }
@@ -152,6 +155,7 @@ test_switch_to_glm_reads_token_from_env() {
             echo "GLM switch: token not loaded from .env"
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_core_test
     return "$status"
 }
@@ -176,6 +180,7 @@ test_switch_to_glm_creates_backup() {
             fi
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_core_test
     return "$status"
 }
@@ -199,6 +204,7 @@ test_switch_to_cc_removes_glm_specific_variables() {
             fi
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_core_test
     return "$status"
 }
@@ -219,6 +225,7 @@ test_switch_to_cc_preserves_custom_variables() {
             echo "CC switch: custom variable removed"
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_core_test
     return "$status"
 }
@@ -243,6 +250,7 @@ test_switch_to_cc_creates_backup() {
             fi
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_core_test
     return "$status"
 }
@@ -274,6 +282,7 @@ EOF
             fi
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_core_test
     return "$status"
 }
@@ -293,6 +302,7 @@ test_dry_run_does_not_modify_settings() {
             echo "Dry run: settings were modified"
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_core_test
     return "$status"
 }
@@ -325,6 +335,7 @@ test_backup_filename_uses_timestamp_format() {
             fi
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_core_test
     return "$status"
 }
@@ -348,6 +359,7 @@ test_backup_contains_valid_json() {
             fi
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_core_test
     return "$status"
 }
@@ -381,6 +393,7 @@ test_glm_backup_strips_only_glm_variables() {
             fi
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_core_test
     return "$status"
 }
@@ -409,6 +422,7 @@ test_list_command_displays_backups() {
             fi
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_core_test
     return "$status"
 }
@@ -437,6 +451,7 @@ EOF
             fi
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_core_test
     return "$status"
 }
@@ -460,6 +475,7 @@ test_restore_rejects_invalid_backup() {
             fi
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_core_test
     return "$status"
 }
@@ -486,6 +502,7 @@ test_restore_creates_pre_restore_backup() {
             fi
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_core_test
     return "$status"
 }
@@ -520,6 +537,7 @@ test_max_backups_cleanup_removes_oldest() {
             fi
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_core_test
     return "$status"
 }
@@ -539,6 +557,7 @@ test_valid_json_allows_switch() {
             echo "Valid JSON: switch failed unexpectedly"
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_core_test
     return "$status"
 }
@@ -554,6 +573,7 @@ test_invalid_json_aborts_switch() {
             echo "Invalid JSON: switch should fail"
         fi
     } || status=$?
+    # shellcheck disable=SC2317  # Code after } || is reachable when block fails
     finish_core_test
     return "$status"
 }
