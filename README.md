@@ -85,6 +85,13 @@ sudo dnf install jq
 ./cc_glm_switcher.sh show
 ```
 
+### Version Information
+
+```bash
+# Show version and repository information
+./cc_glm_switcher.sh --version
+```
+
 This will display:
 
 - The complete `settings.json` file content (with syntax highlighting if `bat` or `jq` is available)
@@ -125,6 +132,16 @@ chmod +x cc_glm_switcher.sh
 
 # Show version information
 ./cc_glm_switcher.sh --version
+```
+
+The version command displays:
+
+```bash
+cc_glm-switcher v1.0.0
+Repository: https://github.com/dkmnx/cc-glm-switcher
+
+A robust shell script utility for switching between Claude Code and Z.AI GLM models.
+Licensed under MIT. Use at your own risk.
 ```
 
 ## Backup Management
