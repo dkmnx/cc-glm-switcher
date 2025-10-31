@@ -4,12 +4,15 @@
 
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
 # Source test helper
-source "$(dirname "$0")/test_helper.sh"
+source "$SCRIPT_DIR/test_helper.sh"
 
 # Test function
 test_shellcheck_linting() {
-    local script_files=("cc_glm_switcher.sh" "install.sh")
+    local script_files=("$REPO_ROOT/cc_glm_switcher.sh" "$REPO_ROOT/install.sh")
 
     echo "Running shellcheck on main scripts..."
 
