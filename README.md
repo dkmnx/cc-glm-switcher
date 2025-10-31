@@ -24,9 +24,9 @@ It handles all configuration changes automatically while maintaining backups and
 ## Prerequisites
 
 - [Claude Code CLI](https://github.com/anthropics/claude-code) installed and configured
-- `jq` command-line JSON processor
-- Valid Z.AI API token
+- Valid Z.AI API token (get from [z.ai](https://z.ai/))
 - Bash shell environment
+- **Note**: `jq` is automatically installed by the install script
 
 ### Installation of Dependencies
 
@@ -41,23 +41,61 @@ brew install jq
 sudo dnf install jq
 ```
 
-## Setup
+## Quick Install
+
+For a **one-command setup**, run:
+
+```bash
+./install.sh
+```
+
+This will automatically:
+
+- Detect your operating system
+- Install required dependencies (`jq`)
+- Set up your environment file
+- Make the script executable
+- Validate the installation
+
+## Manual Setup
+
+If you prefer manual setup or the automated script doesn't work on your system:
 
 1. **Clone or download this repository**
-2. **Create the environment file**:
+2. **Install dependencies**:
+
+   **Ubuntu/Debian:**
+
+   ```bash
+   sudo apt-get install jq
+   ```
+
+   **macOS:**
+
+   ```bash
+   brew install jq
+   ```
+
+   **Fedora/CentOS:**
+
+   ```bash
+   sudo dnf install jq
+   ```
+
+3. **Create the environment file**:
 
    ```bash
    cp .env.example .env
    # Edit .env with your Z.AI API token
    ```
 
-3. **Make the script executable**:
+4. **Make the script executable**:
 
    ```bash
    chmod +x cc_glm_switcher.sh
    ```
 
-4. **Configure your `.env` file** with your Z.AI credentials:
+5. **Configure your `.env` file** with your Z.AI credentials:
 
    ```bash
    ZAI_AUTH_TOKEN=your_zai_api_token_here
