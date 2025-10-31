@@ -61,18 +61,21 @@ tests=(
     "test_core.sh"
     "test_errors.sh"
     "test_cli.sh"
+    "test_lint.sh"
 )
 
 declare -A SUITE_LABELS=(
     ["test_core.sh"]="Core Switching & Backups"
     ["test_errors.sh"]="Error Handling"
     ["test_cli.sh"]="CLI Commands"
+    ["test_lint.sh"]="Shell Script Linting"
 )
 
 declare -A SUITE_COUNTS=(
     ["test_core.sh"]=20
     ["test_errors.sh"]=9
     ["test_cli.sh"]=8
+    ["test_lint.sh"]=1
 )
 
 GREEN='\033[0;32m'
