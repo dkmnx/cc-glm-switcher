@@ -5,76 +5,97 @@ This guide covers common issues and solutions for the cc-glm-switcher script.
 ## Common Issues
 
 ### 1. "claude command not found"
+
 **Problem**: The script cannot find the Claude Code CLI.
 
-**Solution**: 
-- Install Claude Code CLI: https://github.com/anthropics/claude-code
+**Solution**:
+
+- Install Claude Code CLI: <https://github.com/anthropics/claude-code>
 - Ensure it's in your PATH and executable
 
 ### 2. "jq command not found"
+
 **Problem**: The script cannot find the `jq` JSON processor.
 
-**Solution**: 
+**Solution**:
+
 - Install jq using your package manager:
+
   ```bash
   # Ubuntu/Debian
   sudo apt-get install jq
-  
+
   # macOS
   brew install jq
-  
+
   # Fedora/CentOS
   sudo dnf install jq
   ```
 
 ### 3. "ZAI_AUTH_TOKEN not found"
+
 **Problem**: The script cannot find your Z.AI API token.
 
-**Solution**: 
+**Solution**:
+
 - Ensure `.env` file exists in the script directory
 - Check that the token is correctly formatted:
+
   ```bash
   ZAI_AUTH_TOKEN=your_zai_api_token_here
   ```
+
 - Verify the file permissions allow reading
 
 ### 4. "Another instance is already running"
+
 **Problem**: The script detects a lock file, indicating another instance is running.
 
-**Solution**: 
+**Solution**:
+
 - Check if another script instance is actually running:
+
   ```bash
   ps aux | grep cc_glm_switcher
   ```
+
 - If no other instance is running, manually remove the lock file:
+
   ```bash
   rm ~/.claude/.switcher.lock
   ```
 
 ### 5. "Invalid JSON" errors
+
 **Problem**: The script detects invalid JSON in your settings file.
 
-**Solution**: 
+**Solution**:
+
 - Check your current `~/.claude/settings.json` for syntax errors
 - Use a JSON validator to identify the issue
 - Restore from a backup in the `configs/` directory:
+
   ```bash
   # List available backups
   ./cc_glm_switcher.sh list
-  
+
   # Restore from a specific backup
   ./cc_glm_switcher.sh restore 1
   ```
 
 ### 6. Lost custom environment variables
+
 **Problem**: Custom environment variables disappeared after switching modes.
 
-**Solution**: 
+**Solution**:
+
 - The script now preserves custom environment variables automatically
 - Check verbose output (`-v`) to see what variables are being preserved:
+
   ```bash
   ./cc_glm_switcher.sh glm -v
   ```
+
 - If you lost custom variables before this fix, restore from an older backup
 
 ## Debug Mode
@@ -93,6 +114,7 @@ Use verbose output to troubleshoot issues and see detailed operation information
 ```
 
 Verbose output shows:
+
 - Current configuration state
 - Environment variables being preserved/removed
 - File operations being performed
@@ -104,6 +126,7 @@ Verbose output shows:
 If something goes wrong, you can manually restore from a backup:
 
 ### Using the Script
+
 ```bash
 # List available backups
 ./cc_glm_switcher.sh list
@@ -119,6 +142,7 @@ If something goes wrong, you can manually restore from a backup:
 ```
 
 ### Manual Recovery
+
 ```bash
 # List available backups
 ls -la configs/settings_backup_*.json
@@ -133,6 +157,7 @@ jq empty ~/.claude/settings.json
 ## Advanced Troubleshooting
 
 ### Check Script Environment
+
 ```bash
 # Check if required dependencies are available
 which claude jq
@@ -146,6 +171,7 @@ ls -la .env
 ```
 
 ### Validate Configuration Files
+
 ```bash
 # Check current settings.json syntax
 jq empty ~/.claude/settings.json
@@ -158,6 +184,7 @@ cat ~/.claude/settings.json | jq .
 ```
 
 ### Test Script Components
+
 ```bash
 # Test JSON validation function
 echo '{"test": "valid"}' | jq empty

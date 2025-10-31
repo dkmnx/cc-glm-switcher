@@ -57,7 +57,7 @@ sudo dnf install jq
    chmod +x cc_glm_switcher.sh
    ```
 
-4. **Create your `.env` file** with your Z.AI credentials:
+4. **Configure your `.env` file** with your Z.AI credentials:
 
    ```bash
    ZAI_AUTH_TOKEN=your_zai_api_token_here
@@ -92,6 +92,24 @@ This will display:
   - Current provider (Claude or zhipu)
   - Base URL
   - Current mode (Claude Code or Z.AI GLM)
+
+### Quick Start Example
+
+```bash
+# 1. Set up your environment
+cp .env.example .env
+# Edit .env with your ZAI_AUTH_TOKEN
+
+# 2. Make executable and switch to GLM
+chmod +x cc_glm_switcher.sh
+./cc_glm_switcher.sh glm
+
+# 3. Verify the switch worked
+./cc_glm_switcher.sh show
+
+# 4. Switch back to Claude Code when needed
+./cc_glm_switcher.sh cc
+```
 
 ### Advanced Options
 
@@ -196,7 +214,8 @@ Options:
 
 #### Claude Code Mode
 
-- Removes custom environment variables
+- Removes only GLM-specific environment variables
+- Preserves all custom environment variables
 - Restores default Anthropic model configuration
 
 #### GLM Mode
@@ -215,14 +234,16 @@ Options:
 
 ## How It Works
 
-The script modifies the `~/.claude/settings.json` file by manipulating the `env` section:
+The script safely modifies the `~/.claude/settings.json` file by manipulating the `env` section:
 
-1. **Backup**: Creates a timestamped backup of current settings
-2. **Switch**:
-   - **CC mode**: Removes the `env` section entirely
-   - **GLM mode**: Injects Z.AI API configuration
-3. **Validate**: Ensures JSON validity before and after changes
-4. **Apply**: Uses atomic file operations to prevent corruption
+1. **Lock & Validate**: Acquires exclusive lock and validates current configuration
+2. **Backup**: Creates a timestamped backup of current settings (GLM-specific variables removed for clean backups)
+3. **Switch**:
+   - **CC mode**: Removes only GLM-specific environment variables while preserving custom ones
+   - **GLM mode**: Injects Z.AI API configuration while preserving existing custom variables
+4. **Validate**: Ensures JSON validity before and after changes
+5. **Apply**: Uses atomic file operations to prevent corruption
+6. **Cleanup**: Releases lock and removes temporary files
 
 ## Configuration Details
 
@@ -243,7 +264,7 @@ When switching to GLM mode, the script adds these environment variables (preserv
 }
 ```
 
-### 🔄 What Gets Backed Up
+### 🔄 Environment Variable Handling
 
 #### From GLM Mode → Claude Code Mode
 
@@ -255,6 +276,12 @@ When switching to GLM mode, the script adds these environment variables (preserv
 - ✅ **Preserved**: Any existing custom environment variables
 - ➕ **Added**: GLM-specific variables (overwrites if they exist)
 
+#### Backup Strategy
+
+- **Clean Backups**: When backing up GLM configurations, GLM-specific variables are removed to create "clean" snapshots
+- **Full Preservation**: Custom environment variables are always preserved in backups
+- **Timestamped**: All backups include full timestamp for easy identification
+
 ## Security
 
 - **Token security**: Never commit your `.env` file to version control
@@ -263,7 +290,7 @@ When switching to GLM mode, the script adds these environment variables (preserv
 
 ## Testing
 
-This project includes a comprehensive automated test suite with 37 targeted checks across three scripts plus a master runner. For detailed testing information, including how to write additional cases and understand the test framework, see [TESTING.md](TESTING.md).
+This project includes a comprehensive automated test suite with 37 targeted checks across three scripts plus a master runner. For detailed testing information, including how to write additional cases and understand the test framework, see [tests/README.md](tests/README.md).
 
 ### Quick Test Commands
 
@@ -283,7 +310,7 @@ This project includes a comprehensive automated test suite with 37 targeted chec
 
 ### Continuous Integration
 
-GitHub Actions automatically runs the test suite on every push to `main` and on all pull requests. The workflow installs `jq`, `shellcheck`, and `bat`, verifies their availability, and then executes the full suite (`./tests/run_all_tests.sh`). Check the latest status via the **Tests** badge above or by visiting the [Actions dashboard](https://github.com/dkmnx/cc-glm-switcher/actions/workflows/tests.yml).
+GitHub Actions automatically runs the test suite on every push to `main` and on all pull requests. The workflow installs `jq`, `shellcheck`, and `bat`, verifies their availability, and then executes the full suite (`./tests/run_all_tests.sh`). Check the latest status via the **CI** badge above or by visiting the [Actions dashboard](https://github.com/dkmnx/cc-glm-switcher/actions/workflows/ci.yml).
 
 #### Reproducing the CI job locally
 
@@ -321,6 +348,13 @@ We welcome contributions! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) for 
 - Pull request guidelines and review process
 
 All contributions should follow our commit message standards and pass shellcheck validation.
+
+## Project Documentation
+
+- **[CLAUDE.md](CLAUDE.md)**: Guidance for Claude Code when working with this repository
+- **[SUMMARY.md](SUMMARY.md)**: Detailed script summary and architecture overview
+- **[PLAN.md](PLAN.md)**: Test implementation plan and progress tracking
+- **[tests/README.md](tests/README.md)**: Comprehensive testing framework documentation
 
 ## License
 
