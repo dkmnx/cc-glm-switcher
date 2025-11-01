@@ -56,8 +56,8 @@ case "${1:-}" in
         ;;
 esac
 
-# Check dependencies
-if ! command -v claude &> /dev/null; then
+# Check dependencies (skip in test mode)
+if [[ "${TEST_MODE:-}" != "1" ]] && ! command -v claude &> /dev/null; then
     echo "Error: claude command not found. See https://github.com/anthropics/claude-code for installation instructions." >&2
     exit 1
 fi

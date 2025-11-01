@@ -48,6 +48,9 @@ cleanup_test_env() {
 # Setup environment
 setup_test_env
 
+# Enable test mode to bypass claude dependency check
+export TEST_MODE=1
+
 # Test 1: Script exists
 echo -e "\n${YELLOW}1. Testing script existence...${NC}"
 if [[ -f "$SCRIPT" && -x "$SCRIPT" ]]; then
