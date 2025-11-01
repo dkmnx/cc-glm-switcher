@@ -1,4 +1,4 @@
-# Claude Code ↔ Z.AI GLM Model Switcher
+# Claude Code Provider Switcher
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![ShellCheck](https://img.shields.io/badge/ShellCheck-Passing-brightgreen)](https://www.shellcheck.net/)
