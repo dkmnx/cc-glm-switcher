@@ -4,7 +4,7 @@
 [![ShellCheck](https://img.shields.io/badge/ShellCheck-Passing-brightgreen)](https://www.shellcheck.net/)
 [![CI](https://github.com/dkmnx/cc-glm-switcher/actions/workflows/ci.yml/badge.svg)](https://github.com/dkmnx/cc-glm-switcher/actions/workflows/ci.yml)
 
-**Current version:** 1.0.0
+**Current version:** 2.0.0
 
 A robust shell script utility that enables seamless switching between Claude Code and Z.AI GLM models by safely managing your Claude Code configuration.
 
@@ -167,15 +167,9 @@ chmod +x cc_glm_switcher.sh
 ./cc_glm_switcher.sh cc
 ```
 
-### Advanced Options
+### Command Options
 
 ```bash
-# Verbose output (shows current configuration and detailed operations)
-./cc_glm_switcher.sh glm -v
-
-# Dry run (preview changes without applying them)
-./cc_glm_switcher.sh glm --dry-run
-
 # Show help message
 ./cc_glm_switcher.sh -h
 
@@ -183,14 +177,12 @@ chmod +x cc_glm_switcher.sh
 ./cc_glm_switcher.sh --version
 ```
 
+**Note**: The script ignores additional arguments after commands (e.g., `./cc_glm_switcher.sh glm -v` works but `-v` has no effect).
+
 The version command displays:
 
 ```bash
-cc_glm-switcher v1.0.0
-Repository: https://github.com/dkmnx/cc-glm-switcher
-
-A robust shell script utility for switching between Claude Code and Z.AI GLM models.
-Licensed under MIT. Use at your own risk.
+cc-glm-switcher v2.0.0
 ```
 
 ## Backup Management
@@ -205,36 +197,17 @@ Licensed under MIT. Use at your own risk.
 ### Restore From Backup
 
 ```bash
-# Interactive restore (choose from menu)
+# Restore from latest backup
 ./cc_glm_switcher.sh restore
-
-# Restore from specific backup number
-./cc_glm_switcher.sh restore 2
-
-# Restore with dry run to preview
-./cc_glm_switcher.sh restore 1 --dry-run
 ```
 
 ### Backup Retention
 
-Configure backup retention in your `.env` file:
-
-```bash
-# Keep maximum 5 backup files (default)
-MAX_BACKUPS=5
-
-# Keep maximum 10 backup files
-MAX_BACKUPS=10
-
-# Keep maximum 3 backup files
-MAX_BACKUPS=3
-```
-
 The script automatically:
 
 - Creates timestamped backups before any changes
-- Removes oldest backups when limit is exceeded
-- Preserves the most recent backups
+- Keeps the 3 most recent backups
+- Removes older backups automatically
 - Creates backup of current settings before restore
 
 ### Complete Command Reference
@@ -242,111 +215,99 @@ The script automatically:
 Run `./cc_glm_switcher.sh --help` to see all available commands:
 
 ```text
-Commands:
-  cc               Switch to Claude Code models
-  glm              Switch to Z.AI GLM models
-  list             List available backup files
-  restore [N]      Restore from backup (interactive or specify number)
-  show             Display current settings.json file
-
-Options:
-  -v, --verbose    Enable verbose output
-  --dry-run        Show what would be done without making changes
-  -V, --version    Show version information
-  -h, --help       Show this help message
+Usage: ./cc_glm_switcher.sh {cc|glm|list|restore|show}
+Commands: cc=claude, glm=z.ai, list=backups, restore=latest, show=settings
 ```
+
+**Available Commands:**
+- `cc` - Switch to Claude Code models
+- `glm` - Switch to Z.AI GLM models
+- `list` - List available backup files
+- `restore` - Restore from latest backup
+- `show` - Display current settings.json file
+- `-V, --version` - Show version information
+- `-h, --help` - Show help message
 
 ## Features
 
 ### 🔒 Safety & Reliability
 
-- **Atomic operations**: Prevents configuration corruption
 - **Automatic backups**: Timestamped backups before any changes
-- **Backup retention**: Configurable number of backups to keep (default: 5)
-- **Lock mechanism**: Prevents concurrent script execution
-- **JSON validation**: Ensures configuration files remain valid
+- **Backup retention**: Keeps the 3 most recent backups (automatic cleanup)
+- **JSON validation**: Ensures configuration files remain valid using `jq`
 - **Error handling**: Graceful failure with descriptive messages
-- **Intelligent environment preservation**: Safeguards your custom environment variables
+- **Dependency checking**: Validates required tools are available
 
 ### 💾 Backup Management
 
-- **List backups**: View all available backup files with timestamps
-- **Interactive restore**: Choose from available backups via menu
-- **Direct restore**: Restore from specific backup number
-- **Pre-restore backup**: Automatically backs up current settings before restore
-- **Configurable retention**: Set `MAX_BACKUPS` in `.env` file (default: 5)
+- **List backups**: View all available backup files
+- **Latest restore**: Restore from the most recent backup
+- **Automatic cleanup**: Removes older backups (keeps 3 most recent)
+- **Timestamped naming**: Easy identification of backup files
 
 ### 🔄 Model Configuration
 
 #### Claude Code Mode
 
-- Removes only GLM-specific environment variables
-- Preserves all custom environment variables
-- Restores default Anthropic model configuration
+- Creates empty configuration (`{}`) for default Claude Code behavior
+- Removes all custom environment variables for clean state
 
 #### GLM Mode
 
-- Configures Z.AI API endpoint
-- Maps Claude model names to GLM equivalents:
-  - `haiku` → `glm-4.5-air`
-  - `sonnet` → `glm-4.6`
-  - `opus` → `glm-4.6`
+- Configures Z.AI API endpoint and authentication
+- Sets up GLM provider configuration with:
+  - `ANTHROPIC_AUTH_TOKEN`: Your Z.AI API token
+  - `ANTHROPIC_BASE_URL`: Z.AI API endpoint
+  - `CLAUDE_MODEL_PROVIDER`: Set to `zhipu`
 
 ### 📁 File Management
 
-- **Backups**: Stored in `configs/settings_backup_YYYYMMDD_HHMMSS.json`
-- **Lock file**: `$HOME/.claude/.switcher.lock`
-- **Temp files**: Securely created and cleaned up automatically
+- **Backups**: Stored in `configs/backup_[timestamp].json`
+- **Configuration**: Modified in `~/.claude/settings.json`
 
 ## How It Works
 
-The script safely modifies the `~/.claude/settings.json` file by manipulating the `env` section:
+The script safely modifies the `~/.claude/settings.json` file:
 
-1. **Lock & Validate**: Acquires exclusive lock and validates current configuration
-2. **Backup**: Creates a timestamped backup of current settings (GLM-specific variables removed for clean backups)
+1. **Dependencies**: Validates required tools (`jq`, `claude`) are available
+2. **Backup**: Creates a timestamped backup of current settings
 3. **Switch**:
-   - **CC mode**: Removes only GLM-specific environment variables while preserving custom ones
-   - **GLM mode**: Injects Z.AI API configuration while preserving existing custom variables
-4. **Validate**: Ensures JSON validity before and after changes
-5. **Apply**: Uses atomic file operations to prevent corruption
-6. **Cleanup**: Releases lock and removes temporary files
+   - **CC mode**: Creates empty configuration (`{}`) for default behavior
+   - **GLM mode**: Injects Z.AI API configuration from `.env` file
+4. **Apply**: Writes new configuration to settings file
+5. **Cleanup**: Removes old backups (keeps 3 most recent)
 
 ## Configuration Details
 
-When switching to GLM mode, the script adds these environment variables (preserving any existing custom ones):
+When switching to GLM mode, the script creates this configuration:
 
 ```json
 {
   "env": {
     "ANTHROPIC_AUTH_TOKEN": "your_zai_token",
     "ANTHROPIC_BASE_URL": "https://api.z.ai/api/anthropic",
-    "API_TIMEOUT_MS": "3000000",
-    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "glm-4.5-air",
-    "ANTHROPIC_DEFAULT_SONNET_MODEL": "glm-4.6",
-    "ANTHROPIC_DEFAULT_OPUS_MODEL": "glm-4.6",
-    "CLAUDE_MODEL_PROVIDER": "zhipu",
-    "GLM_MODEL_MAPPING": "haiku:glm-4.5-air,sonnet:glm-4.6,opus:glm-4.6"
+    "CLAUDE_MODEL_PROVIDER": "zhipu"
   }
 }
 ```
 
-### 🔄 Environment Variable Handling
+### 🔄 Configuration Switching
 
 #### From GLM Mode → Claude Code Mode
 
-- ✅ **Preserved**: All your custom environment variables (`CUSTOM_API_KEY`, `PERSONAL_CONFIG`, etc.)
-- ❌ **Removed**: Only GLM-specific variables listed above
+- ✅ **Result**: Empty configuration (`{}`) for default Claude Code behavior
+- ❌ **Removed**: All environment variables including GLM settings
 
 #### From Claude Code Mode → GLM Mode
 
-- ✅ **Preserved**: Any existing custom environment variables
-- ➕ **Added**: GLM-specific variables (overwrites if they exist)
+- ✅ **Result**: GLM configuration with Z.AI API settings
+- ➕ **Added**: GLM environment variables from `.env` file
 
 #### Backup Strategy
 
-- **Clean Backups**: When backing up GLM configurations, GLM-specific variables are removed to create "clean" snapshots
-- **Full Preservation**: Custom environment variables are always preserved in backups
-- **Timestamped**: All backups include full timestamp for easy identification
+- **Automatic Backups**: Created before any configuration changes
+- **Timestamped Files**: Named with Unix timestamp for easy identification
+- **Retention**: Keeps 3 most recent backups automatically
 
 ## Security
 
@@ -357,48 +318,47 @@ When switching to GLM mode, the script adds these environment variables (preserv
 
 ## Testing
 
-This project includes a comprehensive automated test suite with 37 targeted checks across three scripts plus a master runner. For detailed testing information, including how to write additional cases and understand the test framework, see [tests/README.md](tests/README.md).
+This project includes a focused automated test suite with 11 essential tests that validate core functionality. For detailed testing information, including test coverage and how to run tests, see [tests/README.md](tests/README.md).
 
 ### Quick Test Commands
 
 ```bash
 # Run all tests
-./tests/run_all_tests.sh
+./tests/run_basic_tests.sh
 
-# Run with verbose output
-./tests/run_all_tests.sh --verbose
-
-# Check dependencies
-./tests/run_all_tests.sh --check-deps
-
-# Mirror the GitHub Actions job locally (requires sudo for apt-get)
-./tests/run_all_tests.sh --check-deps && ./tests/run_all_tests.sh
+# Run tests directly
+./tests/test_basic.sh
 ```
+
+### Test Coverage
+
+The test suite validates:
+
+- ✅ Script existence and execution permissions
+- ✅ Help command functionality
+- ✅ Invalid argument handling and error scenarios
+- ✅ Configuration display (`show` command)
+- ✅ GLM mode authentication requirements
+- ✅ Required dependencies (`jq`, `claude`)
+- ✅ CC mode switching functionality
+- ✅ JSON validation (valid/invalid/empty JSON handling)
 
 ### Continuous Integration
 
-GitHub Actions automatically runs the test suite on every push to `main` and on all pull requests. The workflow installs `jq`, `shellcheck`, and `bat`, verifies their availability, and then executes the full suite (`./tests/run_all_tests.sh`). Check the latest status via the **CI** badge above or by visiting the [Actions dashboard](https://github.com/dkmnx/cc-glm-switcher/actions/workflows/ci.yml).
+GitHub Actions automatically runs the test suite on every push to `main` and on all pull requests. The workflow verifies dependencies and executes the complete test suite (`./tests/run_basic_tests.sh`). Check the latest status via the **CI** badge above or by visiting the [Actions dashboard](https://github.com/dkmnx/cc-glm-switcher/actions/workflows/ci.yml).
 
 #### Reproducing the CI job locally
 
-- **Using `act`** (recommended):
+```bash
+# Install dependencies (Ubuntu/Debian)
+sudo apt-get update
+sudo apt-get install -y jq shellcheck
 
-  ```bash
-  act push --job test
-  ```
+# Run the test suite
+./tests/run_basic_tests.sh
+```
 
-  `act` will run the workflow in a container that matches GitHub’s `ubuntu-latest` runner.
-
-- **Manual dry run** without extra tooling:
-
-  ```bash
-  sudo apt-get update
-  sudo apt-get install -y jq shellcheck bat
-  ./tests/run_all_tests.sh --check-deps
-  ./tests/run_all_tests.sh
-  ```
-
-  Running the commands inside an Ubuntu container (`docker run -it --rm ubuntu:22.04 bash`) gives you a clean environment similar to CI.
+The simplified test suite executes in ~5 seconds and provides comprehensive validation of core script functionality.
 
 ## Troubleshooting
 
@@ -418,9 +378,6 @@ All contributions should follow our commit message standards and pass shellcheck
 
 ## Project Documentation
 
-- **[CLAUDE.md](CLAUDE.md)**: Guidance for Claude Code when working with this repository
-- **[SUMMARY.md](SUMMARY.md)**: Detailed script summary and architecture overview
-- **[PLAN.md](PLAN.md)**: Test implementation plan and progress tracking
 - **[tests/README.md](tests/README.md)**: Comprehensive testing framework documentation
 
 ## License
