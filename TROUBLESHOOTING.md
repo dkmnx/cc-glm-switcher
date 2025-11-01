@@ -1,6 +1,6 @@
 # Troubleshooting
 
-This guide covers common issues and solutions for the cc-glm-switcher script.
+This guide covers common issues and solutions for the cc-provider-switcher script.
 
 ## Common Issues
 
@@ -56,7 +56,7 @@ This guide covers common issues and solutions for the cc-glm-switcher script.
 - Check if another script instance is actually running:
 
   ```bash
-  ps aux | grep cc_glm_switcher
+  ps aux | grep cc_provider_switcher
   ```
 
 - If no other instance is running, manually remove the lock file:
@@ -77,10 +77,10 @@ This guide covers common issues and solutions for the cc-glm-switcher script.
 
   ```bash
   # List available backups
-  ./cc_glm_switcher.sh list
+  ./cc_provider_switcher.sh list
 
   # Restore from a specific backup
-  ./cc_glm_switcher.sh restore 1
+  ./cc_provider_switcher.sh restore 1
   ```
 
 ### 6. Lost custom environment variables
@@ -93,7 +93,7 @@ This guide covers common issues and solutions for the cc-glm-switcher script.
 - Check verbose output (`-v`) to see what variables are being preserved:
 
   ```bash
-  ./cc_glm_switcher.sh glm -v
+  ./cc_provider_switcher.sh glm -v
   ```
 
 - If you lost custom variables before this fix, restore from an older backup
@@ -103,14 +103,14 @@ This guide covers common issues and solutions for the cc-glm-switcher script.
 Use verbose output to troubleshoot issues and see detailed operation information:
 
 ```bash
-# Switch to GLM mode with verbose output
-./cc_glm_switcher.sh glm -v
+# Switch to provider mode with verbose output
+./cc_provider_switcher.sh glm -v
 
 # Switch to CC mode with verbose output
-./cc_glm_switcher.sh cc -v
+./cc_provider_switcher.sh cc -v
 
 # Dry run with verbose output to preview changes
-./cc_glm_switcher.sh glm --dry-run -v
+./cc_provider_switcher.sh glm --dry-run -v
 ```
 
 Verbose output shows:
@@ -129,16 +129,16 @@ If something goes wrong, you can manually restore from a backup:
 
 ```bash
 # List available backups
-./cc_glm_switcher.sh list
+./cc_provider_switcher.sh list
 
 # Interactive restore (choose from menu)
-./cc_glm_switcher.sh restore
+./cc_provider_switcher.sh restore
 
 # Restore from specific backup number
-./cc_glm_switcher.sh restore 2
+./cc_provider_switcher.sh restore 2
 
 # Preview restore before applying
-./cc_glm_switcher.sh restore 1 --dry-run
+./cc_provider_switcher.sh restore 1 --dry-run
 ```
 
 ### Manual Recovery
@@ -214,7 +214,7 @@ If you're still experiencing issues:
 1. **Check the logs**: Use verbose mode (`-v`) to get detailed information
 2. **Search existing issues**: Check the GitHub repository for similar problems
 3. **Create an issue**: Include:
-   - Script version (`./cc_glm_switcher.sh --version`)
+   - Script version (`./cc_provider_switcher.sh --version`)
    - Error messages (full output)
    - Operating system and shell version
    - Steps to reproduce the issue
@@ -246,4 +246,4 @@ The script uses these environment variables:
 - **Environment file**: `./.env` (in script directory)
 - **Backup directory**: `./configs/`
 - **Lock file**: `~/.claude/.switcher.lock`
-- **Script location**: Where you installed `cc_glm_switcher.sh`
+- **Script location**: Where you installed `cc_provider_switcher.sh`

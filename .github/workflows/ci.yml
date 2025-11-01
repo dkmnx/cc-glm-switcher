@@ -19,7 +19,7 @@ jobs:
           sudo apt-get install -y jq shellcheck
 
       - name: Lint main script
-        run: shellcheck cc_glm_switcher.sh
+        run: shellcheck cc_provider_switcher.sh
 
       - name: Lint test scripts
         run: shellcheck tests/*.sh

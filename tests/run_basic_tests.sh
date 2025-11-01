@@ -1,12 +1,12 @@
 #!/bin/bash
-# Basic Test Runner for cc_glm_switcher.sh
+# Basic Test Runner for cc_provider_switcher.sh
 
 # Get script directory (absolute path)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 TEST_SCRIPT="$SCRIPT_DIR/test_basic.sh"
 
-echo "Running basic tests for cc_glm_switcher.sh..."
+echo "Running basic tests for cc_provider_switcher.sh..."
 echo "=============================================="
 echo "Project directory: $PROJECT_DIR"
 echo "Test script: $TEST_SCRIPT"
