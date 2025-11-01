@@ -1,4 +1,4 @@
-# Test Suite for cc_glm_switcher.sh
+# Test Suite for cc_provider_switcher.sh
 
 This directory contains the simplified test suite for the Claude Code / GLM model switcher utility.
 
@@ -93,12 +93,12 @@ Running the test suite produces clear output:
 ```bash
 $ ./tests/run_basic_tests.sh
 
-Running basic tests for cc_glm_switcher.sh...
+Running basic tests for cc_provider_switcher.sh...
 ==============================================
-Project directory: /home/user/cc-glm-switcher
-Test script: /home/user/cc-glm-switcher/tests/test_basic.sh
+Project directory: /home/user/cc-provider-switcher
+Test script: /home/user/cc-provider-switcher/tests/test_basic.sh
 
-Basic Test Suite for cc_glm_switcher.sh
+Basic Test Suite for cc_provider_switcher.sh
 =======================================
 
 1. Testing script existence...
@@ -171,7 +171,7 @@ The test suite uses a simple, direct approach:
 # Test setup
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
-SCRIPT="$PROJECT_DIR/cc_glm_switcher.sh"
+SCRIPT="$PROJECT_DIR/cc_provider_switcher.sh"
 
 # Test execution
 if [condition]; then

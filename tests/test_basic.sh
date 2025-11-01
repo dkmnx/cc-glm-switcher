@@ -1,11 +1,11 @@
 #!/bin/bash
-# Basic Test Suite for cc_glm_switcher.sh
+# Basic Test Suite for cc_provider_switcher.sh
 # Validates core functionality with minimal complexity
 
 # Get absolute paths
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
-SCRIPT="$PROJECT_DIR/cc_glm_switcher.sh"
+SCRIPT="$PROJECT_DIR/cc_provider_switcher.sh"
 FAILURES=0
 
 # Test environment setup
@@ -18,7 +18,7 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-echo "Basic Test Suite for cc_glm_switcher.sh"
+echo "Basic Test Suite for cc_provider_switcher.sh"
 echo "======================================="
 
 # Setup test environment

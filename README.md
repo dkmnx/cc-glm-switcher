@@ -2,11 +2,11 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![ShellCheck](https://img.shields.io/badge/ShellCheck-Passing-brightgreen)](https://www.shellcheck.net/)
-[![CI](https://github.com/dkmnx/cc-glm-switcher/actions/workflows/ci.yml/badge.svg)](https://github.com/dkmnx/cc-glm-switcher/actions/workflows/ci.yml)
+[![CI](https://github.com/dkmnx/cc-provider-switcher/actions/workflows/ci.yml/badge.svg)](https://github.com/dkmnx/cc-provider-switcher/actions/workflows/ci.yml)
 
-**Current version:** 2.0.0
+**Current version:** 3.0.0
 
-A robust shell script utility that enables seamless switching between Claude Code and Z.AI GLM models by safely managing your Claude Code configuration.
+A robust shell script utility that enables seamless switching between Claude Code and multiple AI providers by safely managing your Claude Code configuration.
 
 > **⚠️ Platform Compatibility**: This script has been tested and confirmed to work on Linux only. While it may work on other Unix-like systems (macOS, WSL), compatibility is not guaranteed.
 
@@ -15,7 +15,7 @@ A robust shell script utility that enables seamless switching between Claude Cod
 This script allows you to easily toggle between:
 
 - **Claude Code models** (default Anthropic models)
-- **Z.AI GLM models** (GLM-4.5-air, GLM-4.6) via Z.AI's API
+- **Multiple AI providers** (GLM models and others) via their respective APIs
 
 It handles all configuration changes automatically while maintaining backups and ensuring data integrity.
 
@@ -92,7 +92,7 @@ If you prefer manual setup or the automated script doesn't work on your system:
 4. **Make the script executable**:
 
    ```bash
-   chmod +x cc_glm_switcher.sh
+   chmod +x cc_provider_switcher.sh
    ```
 
 5. **Configure your `.env` file** with your Z.AI credentials:
@@ -121,24 +121,24 @@ If you prefer manual setup or the automated script doesn't work on your system:
 
 ```bash
 # Switch to Claude Code models
-./cc_glm_switcher.sh cc
+./cc_provider_switcher.sh cc
 
-# Switch to Z.AI GLM models
-./cc_glm_switcher.sh glm
+# Switch to provider models
+./cc_provider_switcher.sh glm
 ```
 
 ### View Current Configuration
 
 ```bash
 # Display current settings.json with configuration summary
-./cc_glm_switcher.sh show
+./cc_provider_switcher.sh show
 ```
 
 ### Version Information
 
 ```bash
 # Show version and repository information
-./cc_glm_switcher.sh --version
+./cc_provider_switcher.sh --version
 ```
 
 This will display:
@@ -157,32 +157,32 @@ cp .env.example .env
 # Edit .env with your ZAI_AUTH_TOKEN
 
 # 2. Make executable and switch to GLM
-chmod +x cc_glm_switcher.sh
-./cc_glm_switcher.sh glm
+chmod +x cc_provider_switcher.sh
+./cc_provider_switcher.sh glm
 
 # 3. Verify the switch worked
-./cc_glm_switcher.sh show
+./cc_provider_switcher.sh show
 
 # 4. Switch back to Claude Code when needed
-./cc_glm_switcher.sh cc
+./cc_provider_switcher.sh cc
 ```
 
 ### Command Options
 
 ```bash
 # Show help message
-./cc_glm_switcher.sh -h
+./cc_provider_switcher.sh -h
 
 # Show version information
-./cc_glm_switcher.sh --version
+./cc_provider_switcher.sh --version
 ```
 
-**Note**: The script ignores additional arguments after commands (e.g., `./cc_glm_switcher.sh glm -v` works but `-v` has no effect).
+**Note**: The script ignores additional arguments after commands (e.g., `./cc_provider_switcher.sh glm -v` works but `-v` has no effect).
 
 The version command displays:
 
 ```bash
-cc-glm-switcher v2.0.0
+cc-provider-switcher v3.0.0
 ```
 
 ## Backup Management
@@ -191,14 +191,14 @@ cc-glm-switcher v2.0.0
 
 ```bash
 # List all available backup files
-./cc_glm_switcher.sh list
+./cc_provider_switcher.sh list
 ```
 
 ### Restore From Backup
 
 ```bash
 # Restore from latest backup
-./cc_glm_switcher.sh restore
+./cc_provider_switcher.sh restore
 ```
 
 ### Backup Retention
@@ -212,14 +212,15 @@ The script automatically:
 
 ### Complete Command Reference
 
-Run `./cc_glm_switcher.sh --help` to see all available commands:
+Run `./cc_provider_switcher.sh --help` to see all available commands:
 
 ```text
-Usage: ./cc_glm_switcher.sh {cc|glm|list|restore|show}
-Commands: cc=claude, glm=z.ai, list=backups, restore=latest, show=settings
+Usage: ./cc_provider_switcher.sh {cc|glm|list|restore|show}
+Commands: cc=claude, glm=provider, list=backups, restore=latest, show=settings
 ```
 
 **Available Commands:**
+
 - `cc` - Switch to Claude Code models
 - `glm` - Switch to Z.AI GLM models
 - `list` - List available backup files
@@ -279,7 +280,7 @@ The script safely modifies the `~/.claude/settings.json` file:
 
 ## Configuration Details
 
-When switching to GLM mode, the script creates this configuration:
+When switching to provider mode, the script creates this configuration:
 
 ```json
 {
@@ -298,10 +299,10 @@ When switching to GLM mode, the script creates this configuration:
 - ✅ **Result**: Empty configuration (`{}`) for default Claude Code behavior
 - ❌ **Removed**: All environment variables including GLM settings
 
-#### From Claude Code Mode → GLM Mode
+#### From Claude Code Mode → Provider Mode
 
-- ✅ **Result**: GLM configuration with Z.AI API settings
-- ➕ **Added**: GLM environment variables from `.env` file
+- ✅ **Result**: Provider configuration with API settings
+- ➕ **Added**: Provider environment variables from `.env` file
 
 #### Backup Strategy
 
@@ -345,7 +346,7 @@ The test suite validates:
 
 ### Continuous Integration
 
-GitHub Actions automatically runs the test suite on every push to `main` and on all pull requests. The workflow verifies dependencies and executes the complete test suite (`./tests/run_basic_tests.sh`). Check the latest status via the **CI** badge above or by visiting the [Actions dashboard](https://github.com/dkmnx/cc-glm-switcher/actions/workflows/ci.yml).
+GitHub Actions automatically runs the test suite on every push to `main` and on all pull requests. The workflow verifies dependencies and executes the complete test suite (`./tests/run_basic_tests.sh`). Check the latest status via the **CI** badge above or by visiting the [Actions dashboard](https://github.com/dkmnx/cc-provider-switcher/actions/workflows/ci.yml).
 
 #### Reproducing the CI job locally
 

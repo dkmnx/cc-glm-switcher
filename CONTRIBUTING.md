@@ -24,9 +24,9 @@ We welcome contributions! Please follow these guidelines to ensure a smooth revi
    ./tests/test_basic.sh
 
    # Test basic functionality
-   ./cc_glm_switcher.sh glm
-   ./cc_glm_switcher.sh cc
-   ./cc_glm_switcher.sh show
+   ./cc_provider_switcher.sh glm
+   ./cc_provider_switcher.sh cc
+   ./cc_provider_switcher.sh show
    ```
 
 5. **Ensure all tests pass** before submitting your PR
@@ -40,7 +40,7 @@ We welcome contributions! Please follow these guidelines to ensure a smooth revi
 
   ```bash
   # Check the main script
-  shellcheck cc_glm_switcher.sh
+  shellcheck cc_provider_switcher.sh
 
   # Check test scripts
   shellcheck tests/*.sh

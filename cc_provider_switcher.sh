@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-# Claude Code ↔ Z.AI GLM Model Switcher
+# Claude Code Provider Switcher
 
 ROOT_CC="$HOME/.claude"
 CONFIG_DIR="./configs"
-SCRIPT_VERSION="2.0.0"
-SCRIPT_NAME="cc-glm-switcher"
+SCRIPT_VERSION="3.0.0"
+SCRIPT_NAME="cc-provider-switcher"
 
 # Parse command line arguments
 case "${1:-}" in

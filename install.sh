@@ -14,7 +14,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Configuration
-SCRIPT_NAME="cc_glm_switcher.sh"
+SCRIPT_NAME="cc_provider_switcher.sh"
 
 # Logging functions
 log_info() {
@@ -204,7 +204,7 @@ show_usage() {
 # Main installation function
 main() {
     echo ""
-    log_info "Claude Code ↔ Z.AI GLM Model Switcher Installer"
+    log_info "Claude Code Provider Switcher Installer"
     log_info "=============================================="
     echo ""
 
@@ -238,8 +238,8 @@ main() {
         log_success "Installation completed!"
         echo ""
         log_info "Next steps:"
-        log_info "1. Edit .env with your Z.AI API token (if not done already)"
-        log_info "2. Run: ./$SCRIPT_NAME glm"
+    log_info "1. Edit .env with your API token (if not done already)"
+    log_info "2. Run: ./$SCRIPT_NAME glm"
         log_info "3. Run: ./$SCRIPT_NAME show  # to verify"
     else
         log_error "Installation validation failed"
