@@ -4,7 +4,7 @@
 [![ShellCheck](https://img.shields.io/badge/ShellCheck-Passing-brightgreen)](https://www.shellcheck.net/)
 [![CI](https://github.com/dkmnx/cc-provider-switcher/actions/workflows/ci.yml/badge.svg)](https://github.com/dkmnx/cc-provider-switcher/actions/workflows/ci.yml)
 
-**Current version:** 3.0.0
+**Current version:** 3.0.1
 
 A robust shell script utility that enables seamless switching between Claude Code and multiple AI providers by safely managing your Claude Code configuration.
 
